@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fábrica de Verbos: Conjugación en Pasado</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Roboto+Mono:wght@500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            color: #5d4037;
+            padding: 20px;
+        }
+        
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid #ff8a65;
+        }
+        
+        .header::before {
+            content: '⚙️';
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.1;
+            top: -20px;
+            right: -20px;
+            animation: spin 10s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        h1 {
+            color: #e64a19;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            color: #8d6e63;
+            font-weight: 600;
+        }
+        
+        /* Rules Factory */
+        .rules-conveyor {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .rule-machine {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 8px solid;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .rule-machine:hover {
+            transform: translateY(-5px);
+        }
+        
+        .rule-1 { border-top-color: #66bb6a; }
+        .rule-2 { border-top-color: #42a5f5; }
+        .rule-3 { border-top-color: #ab47bc; }
+        .rule-4 { border-top-color: #ff7043; }
+        
+        .rule-number {
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .rule-1 .rule-number { background: #66bb6a; }
+        .rule-2 .rule-number { background: #42a5f5; }
+        .rule-3 .rule-number { background: #ab47bc; }
+        .rule-4 .rule-number { background: #ff7043; }
+        
+        .rule-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #3e2723;
+        }
+        
+        .rule-formula {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 10px;
+            font-family: 'Roboto Mono', monospace;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            border-left: 4px solid #bdbdbd;
+        }
+        
+        .example-flow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .arrow {
+            color: #ff8a65;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .result {
+            background: #fff3e0;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: #e64a19;
+            border: 2px dashed #ffcc80;
+        }
+        
+        /* Interactive Generator */
+        .generator-section {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border: 3px solid #81c784;
+        }
+        
+        .generator-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #388e3c;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .verb-input {
+            padding: 15px 25px;
+            font-size: 1.3rem;
+            border: 3px solid #e0e0e0;
+            border-radius: 50px;
+            font-family: 'Fredoka', sans-serif;
+            text-align: center;
+            min-width: 250px;
+            transition: all 0.3s;
+            text-transform: lowercase;
+        }
+        
+        .verb-input:focus {
+            outline: none;
+            border-color: #66bb6a;
+            box-shadow: 0 0 0 5px rgba(102, 187, 106, 0.2);
+        }
+        
+        .conj-btn {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 187, 106, 0.4);
+        }
+        
+        .conj-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 187, 106, 0.6);
+        }
+        
+        .conj-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Result Display */
+        .result-display {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: #f1f8e9;
+            border-radius: 20px;
+            border: 3px solid #c5e1a5;
+            animation: slideIn 0.5s;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .step-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .step-label {
+            font-size: 0.8rem;
+            color: #8d6e63;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .step-content {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3e2723;
+        }
+        
+        .step-arrow {
+            font-size: 2rem;
+            color: #ff8a65;
+        }
+        
+        .transformation {
+            background: #fff8e1;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .rule-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        
+        /* Practice Section */
+        .practice-factory {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        
+        .practice-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #5e35b1;
+            margin-bottom: 30px;
+        }
+        
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .exercise-card {
+            background: #fafafa;
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .exercise-card:hover {
+            border-color: #ba68c8;
+            box-shadow: 0 5px 20px rgba(186, 104, 200, 0.2);
+        }
+        
+        .exercise-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            color: #6a1b9a;
+        }
+        
+        .verb-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .verb-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 2px solid #eeeeee;
+        }
+        
+        .verb-base {
+            font-weight: 600;
+            color: #424242;
+        }
+        
+        .verb-input-practice {
+            border: none;
+            border-bottom: 3px solid #ce93d8;
+            padding: 5px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            width: 150px;
+            text-align: center;
+            color: #6a1b9a;
+            font-weight: 700;
+            background: transparent;
+        }
+        
+        .verb-input-practice:focus {
+            outline: none;
+            border-bottom-color: #8e24aa;
+            background: #f3e5f5;
+            border-radius: 5px;
+        }
+        
+        .verb-input-practice.correct {
+            border-bottom-color: #66bb6a;
+            color: #2e7d32;
+            background: #e8f5e9;
+        }
+        
+        .verb-input-practice.incorrect {
+            border-bottom-color: #ef5350;
+            color: #c62828;
+            background: #ffebee;
+        }
+        
+        .check-practice-btn {
+            background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        
+        .check-practice-btn:hover {
+            transform: scale(1.02);
+        }
+        
+        .score-panel {
+            text-align: center;
+            padding: 20px;
+            background: #ede7f6;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            display: none;
+        }
+        
+        .hint {
+            font-size: 0.85rem;
+            color: #78909c;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .step-container { flex-direction: column; }
+            .step-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚙️ Fábrica de Conjugación</h1>
+            <p class="tagline">Transforma verbos regulares al pasado aplicando las reglas ortográficas</p>
+        </div>
+        
+        <!-- Rules Display -->
+        <div class="rules-conveyor">
+            <div class="rule-machine rule-1">
+                <div class="rule-number">1</div>
+                <div class="rule-title">Regla General</div>
+                <div class="rule-formula">Cualquier verbo + ed</div>
+                <div class="example-flow">
+                    <span>play</span>
+                    <span class="arrow">→</span>
+                    <span class="result">played</span>
+                </div>
+            </div>
+            
+            <div class="rule-machine rule-2">
+                <div class="rule-number">2</div>
+                <div class="rule-title">Termina en -e</div>
+                <div class="rule-formula">Quitar -e + d (solo d)</div>
+                <div class="example-flow">
+                    <span>love</span>
+                    <span class="arrow">→</span>
+                    <span class="result">loved</span>
+                </div>
+            </div>
+            
+            <div class="rule-machine rule-3">
+                <div class="rule-number">3</div>
+                <div class="rule-title">Consonante + y</div>
+                <div class="rule-formula">y → i + ed</div>
+                <div class="example-flow">
+                    <span>study</span>
+                    <span class="arrow">→</span>
+                    <span class="result">studied</span>
+                </div>
+                <div class="hint">*Vocal + y: normal (play→played)</div>
+            </div>
+            
+            <div class="rule-machine rule-4">
+                <div class="rule-number">4</div>
+                <div class="rule-title">CVC (1 sílaba)</div>
+                <div class="rule-formula">Duplicar última consonante + ed</div>
+                <div class="example-flow">
+                    <span>stop</span>
+                    <span class="arrow">→</span>
+                    <span class="result">stopped</span>
+                </div>
+                <div class="hint">*Consonante-Vocal-Consonante</div>
+            </div>
+        </div>
+        
+        <!-- Interactive Generator -->
+        <div class="generator-section">
+            <h2 class="generator-title">🤖 Generador Automático</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">Escribe un verbo en base y descubre cómo se transforma:</p>
+            
+            <div class="input-group">
+                <input type="text" id="verbInput" class="verb-input" placeholder="Ej: walk, dance, study..." onkeypress="if(event.key==='Enter') conjugate()">
+                <button class="conj-btn" onclick="conjugate()">⚡ Conjugar</button>
+            </div>
+            
+            <div id="resultArea" class="result-display">
+                <div class="step-container" id="stepsContainer">
+                    <!-- Se genera dinámicamente -->
+                </div>
+                <div class="transformation" id="explanationText">
+                    <!-- Explicación de la regla aplicada -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Practice Section -->
+        <div class="practice-factory">
+            <h2 class="practice-title">🎮 Línea de Producción: Practica por Categorías</h2>
+            
+            <div class="exercise-grid">
+                <!-- Regla 2: e final -->
+                <div class="exercise-card">
+                    <div class="exercise-header">
+                        <span>🎯</span>
+                        <span>Regla 2: Verbos en -e</span>
+                    </div>
+                    <div class="verb-list">
+                        <div class="verb-item">
+                            <span class="verb-base">dance</span>
+                            <input type="text" class="verb-input-practice" data-answer="danced" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">like</span>
+                            <input type="text" class="verb-input-practice" data-answer="liked" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">use</span>
+                            <input type="text" class="verb-input-practice" data-answer="used" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">phone</span>
+                            <input type="text" class="verb-input-practice" data-answer="phoned" placeholder="?">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Regla 3: y final -->
+                <div class="exercise-card">
+                    <div class="exercise-header">
+                        <span>🔄</span>
+                        <span>Regla 3: y → i</span>
+                    </div>
+                    <div class="verb-list">
+                        <div class="verb-item">
+                            <span class="verb-base">carry</span>
+                            <input type="text" class="verb-input-practice" data-answer="carried" placeholder="?">
+                            <small style="color: #999; font-size: 0.7rem;">consonante+y</small>
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">study</span>
+                            <input type="text" class="verb-input-practice" data-answer="studied" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">try</span>
+                            <input type="text" class="verb-input-practice" data-answer="tried" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">play</span>
+                            <input type="text" class="verb-input-practice" data-answer="played" placeholder="?">
+                            <small style="color: #999; font-size: 0.7rem;">vocal+y</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Regla 4: CVC -->
+                <div class="exercise-card">
+                    <div class="exercise-header">
+                        <span>💥</span>
+                        <span>Regla 4: Duplicar (CVC)</span>
+                    </div>
+                    <div class="verb-list">
+                        <div class="verb-item">
+                            <span class="verb-base">stop</span>
+                            <input type="text" class="verb-input-practice" data-answer="stopped" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">plan</span>
+                            <input type="text" class="verb-input-practice" data-answer="planned" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">shop</span>
+                            <input type="text" class="verb-input-practice" data-answer="shopped" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">travel</span>
+                            <input type="text" class="verb-input-practice" data-answer="travelled" placeholder="?">
+                            <small style="color: #999; font-size: 0.7rem;">UK:travelled/US:traveled</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mix General -->
+                <div class="exercise-card" style="border: 3px solid #ff7043;">
+                    <div class="exercise-header">
+                        <span>🎲</span>
+                        <span>Mix General</span>
+                    </div>
+                    <div class="verb-list">
+                        <div class="verb-item">
+                            <span class="verb-base">watch</span>
+                            <input type="text" class="verb-input-practice" data-answer="watched" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">live</span>
+                            <input type="text" class="verb-input-practice" data-answer="lived" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">worry</span>
+                            <input type="text" class="verb-input-practice" data-answer="worried" placeholder="?">
+                        </div>
+                        <div class="verb-item">
+                            <span class="verb-base">prefer</span>
+                            <input type="text" class="verb-input-practice" data-answer="preferred" placeholder="?">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="check-practice-btn" onclick="checkAllPractice()">✅ Verificar Todas las Respuestas</button>
+            
+            <div id="practiceScore" class="score-panel"></div>
+        </div>
+    </div>
+
+    <script>
+        // Conjugation Logic
+        function conjugate() {
+            const input = document.getElementById('verbInput').value.trim().toLowerCase();
+            const resultArea = document.getElementById('resultArea');
+            const stepsContainer = document.getElementById('stepsContainer');
+            const explanation = document.getElementById('explanationText');
+            
+            if (!input) {
+                alert('¡Escribe un verbo primero!');
+                return;
+            }
+            
+            // Check if it's already in past form or irregular
+            if (input.endsWith('ed')) {
+                alert('Este verbo ya está en pasado. Escribe la forma base (infinitivo sin "to").');
+                return;
+            }
+            
+            let result = '';
+            let rule = '';
+            let ruleClass = '';
+            let steps = [];
+            
+            // Rule 2: Ends with 'e'
+            if (input.endsWith('e')) {
+                result = input + 'd';
+                rule = 'Regla 2: Termina en -e';
+                ruleClass = 'rule-2';
+                steps = [
+                    { label: 'Base', content: input },
+                    { label: 'Eliminar', content: '-' },
+                    { label: 'Agregar', content: '+ d' },
+                    { label: 'Resultado', content: result }
+                ];
+            }
+            // Rule 3: Consonant + y
+            else if (input.endsWith('y') && isConsonant(input[input.length - 2])) {
+                const base = input.slice(0, -1);
+                result = base + 'ied';
+                rule = 'Regla 3: Consonante + y → ied';
+                ruleClass = 'rule-3';
+                steps = [
+                    { label: 'Base', content: input },
+                    { label: 'Cambiar y→i', content: base + 'i' },
+                    { label: 'Agregar', content: '+ ed' },
+                    { label: 'Resultado', content: result }
+                ];
+            }
+            // Rule 4: CVC (Consonant-Vowel-Consonant) with one syllable
+            else if (isCVC(input)) {
+                result = input + input[input.length - 1] + 'ed';
+                rule = 'Regla 4: CVC (Duplicar consonante)';
+                ruleClass = 'rule-4';
+                steps = [
+                    { label: 'Base', content: input },
+                    { label: 'Duplicar', content: input + input[input.length - 1] },
+                    { label: 'Agregar', content: '+ ed' },
+                    { label: 'Resultado', content: result }
+                ];
+            }
+            // Rule 1: General
+            else {
+                result = input + 'ed';
+                rule = 'Regla 1: General (solo + ed)';
+                ruleClass = 'rule-1';
+                steps = [
+                    { label: 'Base', content: input },
+                    { label: 'Agregar', content: '+ ed' },
+                    { label: 'Resultado', content: result }
+                ];
+            }
+            
+            // Render steps
+            stepsContainer.innerHTML = steps.map((step, index) => `
+                <div class="step-box">
+                    <div class="step-label">${step.label}</div>
+                    <div class="step-content">${step.content}</div>
+                </div>
+                ${index < steps.length - 1 ? '<div class="step-arrow">→</div>' : ''}
+            `).join('');
+            
+            // Render explanation
+            explanation.innerHTML = `
+                <strong>🔍 Análisis:</strong> "${input}" ${getExplanationText(input, rule)}
+                <br><span class="rule-badge ${ruleClass}">${rule}</span>
+            `;
+            
+            resultArea.style.display = 'block';
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function isConsonant(char) {
+            if (!char) return false;
+            return !['a', 'e', 'i', 'o', 'u'].includes(char.toLowerCase());
+        }
+        
+        function isCVC(word) {
+            if (word.length < 3) return false;
+            const last3 = word.slice(-3);
+            // Check pattern: consonant - vowel - consonant
+            if (last3.length === 3) {
+                return isConsonant(last3[0]) && !isConsonant(last3[1]) && isConsonant(last3[2]);
+            }
+            return false;
+        }
+        
+        function getExplanationText(verb, rule) {
+            if (rule.includes('Regla 2')) return `termina en <strong>e</strong>, solo agregamos <strong>d</strong>.`;
+            if (rule.includes('Regla 3')) return `termina en <strong>consonante + y</strong>, cambiamos la <strong>y por i</strong> y agregamos <strong>ed</strong>.`;
+            if (rule.includes('Regla 4')) return `sigue el patrón <strong>Consonante-Vocal-Consonante</strong> (CVC), duplicamos la última letra.`;
+            return `no tiene reglas especiales, agregamos <strong>ed</strong> directamente.`;
+        }
+        
+        // Practice Checking
+        function checkAllPractice() {
+            const inputs = document.querySelectorAll('.verb-input-practice');
+            let correct = 0;
+            let total = inputs.length;
+            
+            inputs.forEach(input => {
+                const userAnswer = input.value.trim().toLowerCase();
+                const correctAnswer = input.dataset.answer.toLowerCase();
+                
+                input.classList.remove('correct', 'incorrect');
+                
+                if (userAnswer === correctAnswer) {
+                    input.classList.add('correct');
+                    correct++;
+                } else {
+                    input.classList.add('incorrect');
+                    // Show correct answer after a delay
+                    setTimeout(() => {
+                        if (input.value.trim().toLowerCase() !== correctAnswer) {
+                            input.placeholder = correctAnswer;
+                            input.style.fontSize = '0.9rem';
+                        }
+                    }, 1000);
+                }
+            });
+            
+            const scorePanel = document.getElementById('practiceScore');
+            const percentage = Math.round((correct / total) * 100);
+            
+            let message = '';
+            let emoji = '';
+            
+            if (percentage === 100) {
+                message = '¡Maestro de la conjugación!';
+                emoji = '🏆';
+            } else if (percentage >= 75) {
+                message = '¡Muy bien! Casi lo dominas';
+                emoji = '⭐';
+            } else if (percentage >= 50) {
+                message = 'Buen intento, sigue practicando';
+                emoji = '💪';
+            } else {
+                message = 'Revisa las reglas arriba y vuelve a intentar';
+                emoji = '📚';
+            }
+            
+            scorePanel.innerHTML = `${emoji} Resultado: ${correct}/${total} (${percentage}%) - ${message}`;
+            scorePanel.style.display = 'block';
+            scorePanel.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Allow Enter key in generator
+        document.getElementById('verbInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') conjugate();
+        });
+    </script>
+</body>
+</html>

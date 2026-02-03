@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regular Verbs Defender</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Roboto+Mono:wght@500&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s;
+        }
+        
+        .screen.active { display: flex; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Header Styles */
+        h1 { 
+            font-size: 3rem; 
+            text-align: center; 
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        }
+        
+        .subtitle { 
+            font-size: 1.3rem; 
+            opacity: 0.9; 
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: 700;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .btn-green { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .btn-yellow { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .btn-purple { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #764ba2; }
+        
+        /* Level Map */
+        .map-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .level-path {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .level-node {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            position: relative;
+        }
+        
+        .level-node:hover:not(.locked) {
+            transform: translateX(10px);
+            background: rgba(255,255,255,0.25);
+            border-color: white;
+        }
+        
+        .level-node.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+        }
+        
+        .level-node.completed {
+            background: rgba(76, 239, 159, 0.3);
+            border-color: #4cefa0;
+        }
+        
+        .level-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #764ba2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .level-info { flex: 1; }
+        .level-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 5px; }
+        .level-desc { font-size: 0.95rem; opacity: 0.9; }
+        
+        .stars-display {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+        }
+        
+        /* Game Interface */
+        .game-container {
+            background: white;
+            color: #333;
+            border-radius: 30px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #f0f0f0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        /* Timer */
+        .timer-container {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #764ba2;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 4px solid #f0f0f0;
+        }
+        
+        .timer-container.danger {
+            border-color: #f5576c;
+            color: #f5576c;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Question Area */
+        .question-box {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .verb-display {
+            font-size: 3rem;
+            color: #764ba2;
+            font-weight: 800;
+            margin-bottom: 10px;
+            font-family: 'Roboto Mono', monospace;
+            text-transform: uppercase;
+        }
+        
+        .instruction {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        
+        .rule-tag {
+            display: inline-block;
+            background: #ffeaa7;
+            color: #d63031;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        /* Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .option-btn {
+            background: #f8f9fa;
+            border: 3px solid #e9ecef;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #495057;
+            transition: all 0.2s;
+            font-family: 'Roboto Mono', monospace;
+            text-transform: lowercase;
+        }
+        
+        .option-btn:hover {
+            border-color: #764ba2;
+            background: #f3f0ff;
+            transform: translateY(-2px);
+        }
+        
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            animation: correctPop 0.5s;
+        }
+        
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            animation: shake 0.5s;
+        }
+        
+        .option-btn.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        @keyframes correctPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        /* Input Style */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .text-input {
+            flex: 1;
+            padding: 20px;
+            font-size: 1.3rem;
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            text-transform: lowercase;
+            font-weight: 600;
+            color: #764ba2;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.1);
+        }
+        
+        .text-input.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .text-input.wrong {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        /* Matching Game */
+        .matching-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .match-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .match-card:hover:not(.flipped):not(.matched) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .match-card.flipped {
+            background: white;
+            color: #764ba2;
+            border-color: #764ba2;
+            transform: rotateY(180deg);
+        }
+        
+        .match-card.matched {
+            background: #4cefa0;
+            color: white;
+            opacity: 0.7;
+            cursor: default;
+        }
+        
+        .match-card.wrong {
+            background: #f5576c;
+            animation: shake 0.5s;
+        }
+        
+        /* Feedback */
+        .feedback-msg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            pointer-events: none;
+            z-index: 1000;
+            animation: floatUp 1s forwards;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1) translateY(-100px); opacity: 0; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .matching-grid { grid-template-columns: repeat(2, 1fr); }
+            .verb-display { font-size: 2rem; }
+            .game-header { flex-direction: column; text-align: center; }
+        }
+        
+        /* Celebration */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+        
+        .confetti {
+            position: absolute;
+            font-size: 2rem;
+            animation: fall linear forwards;
+        }
+        
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN: Start -->
+    <div id="startScreen" class="screen active">
+        <h1>🛡️ REGULAR VERBS DEFENDER</h1>
+        <p class="subtitle">Domina los 4 tipos de verbos regulares en pasado</p>
+        <div style="font-size: 4rem; margin: 20px;">⚔️📚✨</div>
+        <button class="btn" onclick="showMap()">COMENZAR AVENTURA</button>
+        <div style="margin-top: 30px; background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; max-width: 500px; text-align: center;">
+            <p style="margin-bottom: 10px; font-weight: bold;">🎯 Reglas que aprenderás:</p>
+            <p style="font-size: 0.95rem; line-height: 1.6;">
+                1️⃣ General: +ed (play→played)<br>
+                2️⃣ Terminan en e: +d (love→loved)<br>
+                3️⃣ Consonante+y: -y+ied (study→studied)<br>
+                4️⃣ CVC: doble consonante (stop→stopped)
+            </p>
+        </div>
+    </div>
+
+    <!-- SCREEN: Map -->
+    <div id="mapScreen" class="screen">
+        <h1>🗺️ MAPA DE APRENDIZAJE</h1>
+        <p class="subtitle">Selecciona un nivel para defender el idioma</p>
+        
+        <div class="map-container">
+            <div class="level-path">
+                <div class="level-node" id="node1" onclick="startLevel(1)">
+                    <div class="level-icon">1</div>
+                    <div class="level-info">
+                        <div class="level-title">El Valle Básico</div>
+                        <div class="level-desc">Regla General: Solo agregar -ed</div>
+                    </div>
+                    <div class="stars-display" id="stars1"></div>
+                </div>
+                
+                <div style="text-align: center; font-size: 2rem; color: rgba(255,255,255,0.3);">⬇️</div>
+                
+                <div class="level-node locked" id="node2" onclick="if(!this.classList.contains('locked')) startLevel(2)">
+                    <div class="level-icon">2</div>
+                    <div class="level-info">
+                        <div class="level-title">La Cueva Silenciosa</div>
+                        <div class="level-desc">Terminan en -e: Solo agregar -d</div>
+                    </div>
+                    <div class="stars-display" id="stars2"></div>
+                </div>
+                
+                <div style="text-align: center; font-size: 2rem; color: rgba(255,255,255,0.3);">⬇️</div>
+                
+                <div class="level-node locked" id="node3" onclick="if(!this.classList.contains('locked')) startLevel(3)">
+                    <div class="level-icon">3</div>
+                    <div class="level-info">
+                        <div class="level-title">El Bosque Y</div>
+                        <div class="level-desc">Consonante + y: Cambiar a -ied</div>
+                    </div>
+                    <div class="stars-display" id="stars3"></div>
+                </div>
+                
+                <div style="text-align: center; font-size: 2rem; color: rgba(255,255,255,0.3);">⬇️</div>
+                
+                <div class="level-node locked" id="node4" onclick="if(!this.classList.contains('locked')) startLevel(4)">
+                    <div class="level-icon">4</div>
+                    <div class="level-info">
+                        <div class="level-title">Las Ruinas CVC</div>
+                        <div class="level-desc">Duplicar la última consonante</div>
+                    </div>
+                    <div class="stars-display" id="stars4"></div>
+                </div>
+                
+                <div style="text-align: center; font-size: 2rem; color: rgba(255,255,255,0.3);">⬇️</div>
+                
+                <div class="level-node locked" id="node5" onclick="if(!this.classList.contains('locked')) startLevel(5)">
+                    <div class="level-icon">👑</div>
+                    <div class="level-info">
+                        <div class="level-title">La Fortaleza Mixta</div>
+                        <div class="level-desc">¡Jefe Final! Todas las reglas</div>
+                    </div>
+                    <div class="stars-display" id="stars5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN: Game -->
+    <div id="gameScreen" class="screen">
+        <div class="game-container">
+            <div class="timer-container" id="timerDisplay" style="display: none;">30</div>
+            
+            <div class="game-header">
+                <div class="stat-box">❤️ Vidas: <span id="livesCount">3</span></div>
+                <div class="stat-box">⭐ Puntos: <span id="scoreCount">0</span></div>
+                <div class="stat-box">📊 <span id="progressText">1/10</span></div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            
+            <div id="gameContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN: Level Complete -->
+    <div id="completeScreen" class="screen">
+        <h1 id="completeTitle" style="color: #4cefa0;">¡NIVEL COMPLETADO!</h1>
+        <div style="font-size: 6rem; margin: 20px;" id="completeEmoji">🏆</div>
+        <div style="font-size: 2rem; margin-bottom: 10px;">Puntuación: <span id="finalScore" style="color: #764ba2; font-weight: bold;">0</span></div>
+        <div style="font-size: 3rem; margin-bottom: 30px;" id="finalStars">⭐⭐⭐</div>
+        <p id="completeMessage" style="margin-bottom: 30px; font-size: 1.2rem; color: #666; text-align: center; max-width: 500px;"></p>
+        <button class="btn btn-green" onclick="backToMap()">CONTINUAR</button>
+    </div>
+
+    <!-- SCREEN: Game Over -->
+    <div id="gameOverScreen" class="screen">
+        <h1 style="color: #f5576c;">❌ ¡INTENTO FALLIDO!</h1>
+        <div style="font-size: 5rem; margin: 20px;">💔</div>
+        <p style="margin-bottom: 30px; color: #666; font-size: 1.2rem;">¡No te rindas! Practica la regla e intenta de nuevo.</p>
+        <button class="btn" onclick="retryLevel()">REINTENTAR</button>
+        <button class="btn btn-yellow" onclick="backToMap()" style="margin-left: 10px;">MAPA</button>
+    </div>
+
+    <script>
+        // Game Data - SOLO VERBOS REGULARES
+        const gameData = {
+            1: {
+                name: "El Valle Básico",
+                rule: "Regla General: Agregar -ed",
+                timer: false,
+                questions: [
+                    { type: 'choice', verb: 'play', options: ['playd', 'played', 'plaied'], correct: 'played' },
+                    { type: 'choice', verb: 'walk', options: ['walked', 'walkd', 'wal ked'], correct: 'walked' },
+                    { type: 'input', verb: 'watch', answer: 'watched' },
+                    { type: 'choice', verb: 'listen', options: ['listened', 'listen ed', 'listend'], correct: 'listened' },
+                    { type: 'input', verb: 'call', answer: 'called' },
+                    { type: 'choice', verb: 'jump', options: ['jumped', 'jumpt', 'jumpd'], correct: 'jumped' },
+                    { type: 'input', verb: 'work', answer: 'worked' },
+                    { type: 'choice', verb: 'clean', options: ['cleaned', 'cleand', 'clean ed'], correct: 'cleaned' },
+                    { type: 'input', verb: 'wait', answer: 'waited' },
+                    { type: 'choice', verb: ' rain', options: ['rained', 'raind', 'rain ed'], correct: 'rained' }
+                ]
+            },
+            2: {
+                name: "La Cueva Silenciosa",
+                rule: "Terminan en -e: Solo agregar -d",
+                timer: true,
+                timeLimit: 15,
+                questions: [
+                    { type: 'choice', verb: 'dance', options: ['danced', 'danceed', 'dancd'], correct: 'danced' },
+                    { type: 'input', verb: 'love', answer: 'loved' },
+                    { type: 'choice', verb: 'like', options: ['liked', 'likeed', 'likd'], correct: 'liked' },
+                    { type: 'input', verb: 'use', answer: 'used' },
+                    { type: 'choice', verb: 'phone', options: ['phoned', 'phoneed', 'phond'], correct: 'phoned' },
+                    { type: 'input', verb: 'arrive', answer: 'arrived' },
+                    { type: 'choice', verb: 'save', options: ['saved', 'saveed', 'savd'], correct: 'saved' },
+                    { type: 'input', verb: 'close', answer: 'closed' },
+                    { type: 'choice', verb: 'smile', options: ['smiled', 'smileed', 'smild'], correct: 'smiled' },
+                    { type: 'input', verb: 'hate', answer: 'hated' }
+                ]
+            },
+            3: {
+                name: "El Bosque Y",
+                rule: "Consonante + y: Cambiar y→i y agregar -ed",
+                timer: true,
+                timeLimit: 15,
+                type: 'matching',
+                pairs: [
+                    { base: 'study', past: 'studied' },
+                    { base: 'carry', past: 'carried' },
+                    { base: 'try', past: 'tried' },
+                    { base: 'cry', past: 'cried' },
+                    { base: 'fly', past: 'flew', decoy: true }, // Trampa! Es irregular, pero ponemos flied como opción incorrecta
+                    { base: 'worry', past: 'worried' }
+                ]
+            },
+            4: {
+                name: "Las Ruinas CVC",
+                rule: "CVC (Consonante-Vocal-Consonante): Duplicar última letra",
+                timer: true,
+                timeLimit: 20,
+                questions: [
+                    { type: 'choice', verb: 'stop', options: ['stoped', 'stopped', 'stoppped'], correct: 'stopped' },
+                    { type: 'input', verb: 'plan', answer: 'planned' },
+                    { type: 'choice', verb: 'shop', options: ['shopped', 'shoped', 'shoper'], correct: 'shopped' },
+                    { type: 'input', verb: 'drop', answer: 'dropped' },
+                    { type: 'choice', verb: 'prefer', options: ['prefered', 'preferred', 'preffered'], correct: 'preferred' },
+                    { type: 'input', verb: 'admit', answer: 'admitted' },
+                    { type: 'choice', verb: 'commit', options: ['commited', 'committed', 'comitted'], correct: 'committed' },
+                    { type: 'input', verb: 'trip', answer: 'tripped' }
+                ]
+            },
+            5: {
+                name: "La Fortaleza Mixta",
+                rule: "¡Todas las reglas combinadas!",
+                timer: true,
+                timeLimit: 12,
+                questions: [
+                    { type: 'choice', verb: 'play', options: ['played', 'plaied', 'playd'], correct: 'played', hint: 'General' },
+                    { type: 'input', verb: 'love', answer: 'loved', hint: 'Termina en e' },
+                    { type: 'choice', verb: 'study', options: ['studyed', 'studied', 'studying'], correct: 'studied', hint: 'Consonante + y' },
+                    { type: 'input', verb: 'stop', answer: 'stopped', hint: 'CVC' },
+                    { type: 'choice', verb: 'watch', options: ['watched', 'watchd', 'waching'], correct: 'watched', hint: 'General' },
+                    { type: 'input', verb: 'dance', answer: 'danced', hint: 'Termina en e' },
+                    { type: 'choice', verb: 'carry', options: ['carryed', 'carried', 'carring'], correct: 'carried', hint: 'Consonante + y' },
+                    { type: 'input', verb: 'plan', answer: 'planned', hint: 'CVC' },
+                    { type: 'choice', verb: 'walk', options: ['walked', 'walkd', 'walking'], correct: 'walked', hint: 'General' },
+                    { type: 'input', verb: 'smile', answer: 'smiled', hint: 'Termina en e' }
+                ]
+            }
+        };
+
+        // Game State
+        let currentLevel = 1;
+        let currentQuestion = 0;
+        let score = 0;
+        let lives = 3;
+        let timer = null;
+        let timeLeft = 0;
+        let unlockedLevels = 1;
+        let levelStars = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        let matchedPairs = 0;
+        let selectedCards = [];
+        
+        function showMap() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('mapScreen').classList.add('active');
+            updateMap();
+        }
+        
+        function updateMap() {
+            for (let i = 1; i <= 5; i++) {
+                const node = document.getElementById(`node${i}`);
+                const starsDiv = document.getElementById(`stars${i}`);
+                
+                if (i <= unlockedLevels) {
+                    node.classList.remove('locked');
+                    if (levelStars[i] > 0) {
+                        node.classList.add('completed');
+                        starsDiv.textContent = '⭐'.repeat(levelStars[i]);
+                    }
+                } else {
+                    node.classList.add('locked');
+                }
+            }
+        }
+        
+        function startLevel(level) {
+            currentLevel = level;
+            currentQuestion = 0;
+            score = 0;
+            lives = 3;
+            matchedPairs = 0;
+            selectedCards = [];
+            
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('gameScreen').classList.add('active');
+            
+            const data = gameData[level];
+            
+            if (data.timer) {
+                document.getElementById('timerDisplay').style.display = 'flex';
+            } else {
+                document.getElementById('timerDisplay').style.display = 'none';
+            }
+            
+            if (data.type === 'matching') {
+                initMatchingGame();
+            } else {
+                loadQuestion();
+            }
+            
+            updateStats();
+        }
+        
+        function initMatchingGame() {
+            const content = document.getElementById('gameContent');
+            const pairs = gameData[3].pairs.filter(p => !p.decoy); // Excluir trampa si existe
+            const cards = [];
+            
+            // Crear cartas base y pasado
+            pairs.forEach(pair => {
+                cards.push({ text: pair.base, type: 'base', pair: pair.past });
+                cards.push({ text: pair.past, type: 'past', pair: pair.base });
+            });
+            
+            // Mezclar
+            cards.sort(() => Math.random() - 0.5);
+            
+            let html = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <span class="rule-tag">REGLA: Consonante + y → ied</span>
+                    <div class="instruction">Haz clic en las cartas para emparejar el verbo base con su pasado</div>
+                </div>
+                <div class="matching-grid" id="matchingGrid">
+            `;
+            
+            cards.forEach((card, idx) => {
+                html += `<div class="match-card" data-idx="${idx}" data-text="${card.text}" data-pair="${card.pair}" onclick="flipCard(this)">?</div>`;
+            });
+            
+            html += '</div>';
+            html += '<div style="text-align: center; margin-top: 20px; font-size: 1.2rem;">Parejas: <span id="matchCount" style="font-weight: bold; color: #764ba2;">0</span>/6</div>';
+            
+            content.innerHTML = html;
+            
+            // Timer para nivel 3 también
+            if (gameData[3].timer) {
+                startTimer(gameData[3].timeLimit);
+            }
+        }
+        
+        function flipCard(card) {
+            if (card.classList.contains('flipped') || card.classList.contains('matched') || selectedCards.length >= 2) return;
+            
+            card.textContent = card.dataset.text;
+            card.classList.add('flipped');
+            selectedCards.push(card);
+            
+            if (selectedCards.length === 2) {
+                checkMatch();
+            }
+        }
+        
+        function checkMatch() {
+            const [c1, c2] = selectedCards;
+            const text1 = c1.dataset.text;
+            const text2 = c2.dataset.text;
+            const pair1 = c1.dataset.pair;
+            const pair2 = c2.dataset.pair;
+            
+            // Verificar si son pareja (uno es el base del otro)
+            const isMatch = (text1 === pair2) || (text2 === pair1);
+            
+            if (isMatch) {
+                c1.classList.add('matched');
+                c2.classList.add('matched');
+                matchedPairs++;
+                score += 100;
+                document.getElementById('matchCount').textContent = matchedPairs;
+                showFeedback('✨');
+                
+                if (matchedPairs >= 6) {
+                    clearInterval(timer);
+                    setTimeout(levelComplete, 1000);
+                }
+            } else {
+                c1.classList.add('wrong');
+                c2.classList.add('wrong');
+                setTimeout(() => {
+                    c1.classList.remove('flipped', 'wrong');
+                    c2.classList.remove('flipped', 'wrong');
+                    c1.textContent = '?';
+                    c2.textContent = '?';
+                }, 800);
+                lives--;
+                updateStats();
+                if (lives <= 0) gameOver();
+            }
+            
+            selectedCards = [];
+            updateStats();
+        }
+        
+        function loadQuestion() {
+            const data = gameData[currentLevel];
+            const q = data.questions[currentQuestion];
+            const content = document.getElementById('gameContent');
+            
+            // Update progress
+            const total = data.questions.length;
+            const progress = ((currentQuestion) / total) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${currentQuestion + 1}/${total}`;
+            
+            // Reset and start timer
+            clearInterval(timer);
+            if (data.timer) {
+                startTimer(data.timeLimit);
+            }
+            
+            let html = '';
+            
+            if (q.type === 'choice') {
+                html = `
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        ${data.hint ? `<span class="rule-tag">PISTA: ${q.hint || data.rule}</span>` : `<span class="rule-tag">${data.rule}</span>`}
+                    </div>
+                    <div class="question-box">
+                        <div class="instruction">Selecciona la forma correcta del pasado:</div>
+                        <div class="verb-display">${q.verb}</div>
+                        <div class="options-grid">
+                            ${q.options.map((opt, idx) => `
+                                <button class="option-btn" onclick="checkChoice('${opt}', '${q.correct}', this)">${opt}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (q.type === 'input') {
+                html = `
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        ${data.hint ? `<span class="rule-tag">PISTA: ${q.hint || data.rule}</span>` : `<span class="rule-tag">${data.rule}</span>`}
+                    </div>
+                    <div class="question-box">
+                        <div class="instruction">Escribe la forma del pasado:</div>
+                        <div class="verb-display">${q.verb}</div>
+                        <div class="input-group">
+                            <input type="text" class="text-input" id="answerInput" placeholder="Escribe aquí..." onkeypress="if(event.key==='Enter') checkInput()">
+                            <button class="btn btn-green" onclick="checkInput()" style="padding: 20px 30px;">✓</button>
+                        </div>
+                        <small style="color: #999; display: block; margin-top: 10px;">Ejemplo: play → played</small>
+                    </div>
+                `;
+                setTimeout(() => document.getElementById('answerInput')?.focus(), 100);
+            }
+            
+            content.innerHTML = html;
+        }
+        
+        function startTimer(seconds) {
+            timeLeft = seconds;
+            const display = document.getElementById('timerDisplay');
+            display.textContent = timeLeft;
+            display.classList.remove('danger');
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                display.textContent = timeLeft;
+                
+                if (timeLeft <= 5) {
+                    display.classList.add('danger');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    handleWrong();
+                }
+            }, 1000);
+        }
+        
+        function checkChoice(selected, correct, btn) {
+            // Disable all buttons
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.add('disabled'));
+            
+            if (selected === correct) {
+                btn.classList.add('correct');
+                showFeedback('✅');
+                handleCorrect();
+            } else {
+                btn.classList.add('wrong');
+                // Highlight correct one
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    if (b.textContent === correct) b.classList.add('correct');
+                });
+                showFeedback('❌');
+                handleWrong();
+            }
+        }
+        
+        function checkInput() {
+            const input = document.getElementById('answerInput');
+            const answer = input.value.trim().toLowerCase();
+            const correct = gameData[currentLevel].questions[currentQuestion].answer.toLowerCase();
+            
+            input.classList.add(answer === correct ? 'correct' : 'wrong');
+            
+            if (answer === correct) {
+                showFeedback('✅');
+                handleCorrect();
+            } else {
+                showFeedback('❌');
+                // Show correct after delay
+                setTimeout(() => {
+                    input.value = correct;
+                    input.style.color = '#28a745';
+                }, 1000);
+                handleWrong();
+            }
+        }
+        
+        function handleCorrect() {
+            score += 100 + (timeLeft * 10); // Bonus for speed
+            updateStats();
+            
+            clearInterval(timer);
+            
+            setTimeout(() => {
+                currentQuestion++;
+                const total = gameData[currentLevel].questions.length;
+                if (currentQuestion < total) {
+                    loadQuestion();
+                } else {
+                    levelComplete();
+                }
+            }, 1500);
+        }
+        
+        function handleWrong() {
+            lives--;
+            updateStats();
+            
+            clearInterval(timer);
+            
+            if (lives <= 0) {
+                setTimeout(gameOver, 1000);
+            } else {
+                setTimeout(() => {
+                    currentQuestion++;
+                    const total = gameData[currentLevel].questions.length;
+                    if (currentQuestion < total) {
+                        loadQuestion();
+                    } else {
+                        levelComplete();
+                    }
+                }, 1500);
+            }
+        }
+        
+        function updateStats() {
+            document.getElementById('scoreCount').textContent = score;
+            document.getElementById('livesCount').textContent = lives;
+        }
+        
+        function showFeedback(emoji) {
+            const div = document.createElement('div');
+            div.className = 'feedback-msg';
+            div.textContent = emoji;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 1000);
+        }
+        
+        function levelComplete() {
+            // Calculate stars
+            const maxScore = gameData[currentLevel].questions.length * 150;
+            const ratio = score / maxScore;
+            let stars = 1;
+            if (ratio >= 0.6) stars = 2;
+            if (ratio >= 0.85) stars = 3;
+            
+            levelStars[currentLevel] = stars;
+            
+            // Unlock next level
+            if (currentLevel < 5 && currentLevel >= unlockedLevels) {
+                unlockedLevels = currentLevel + 1;
+            }
+            
+            // Confetti effect
+            createConfetti();
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalStars').textContent = '⭐'.repeat(stars);
+            
+            const messages = {
+                1: "¡Excelente! Dominas los verbos regulares básicos.",
+                2: "¡Perfecto! Sabes cuándo solo agregar -d.",
+                3: "¡Gran memoria! Los verbos en -y no son problema.",
+                4: "¡Increíble! Dominas las consonantes dobles.",
+                5: "¡ERES UN MAESTRO! Has conquistado todos los verbos regulares."
+            };
+            
+            document.getElementById('completeMessage').textContent = messages[currentLevel];
+            document.getElementById('completeTitle').textContent = currentLevel === 5 ? "¡JUEGO COMPLETADO!" : "¡NIVEL COMPLETADO!";
+            
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('completeScreen').classList.add('active');
+        }
+        
+        function gameOver() {
+            clearInterval(timer);
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('gameOverScreen').classList.add('active');
+        }
+        
+        function retryLevel() {
+            startLevel(currentLevel);
+        }
+        
+        function backToMap() {
+            showMap();
+        }
+        
+        function createConfetti() {
+            const colors = ['🎉', '✨', '🎊', '💫', '🌟'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'confetti';
+                    div.textContent = colors[Math.floor(Math.random() * colors.length)];
+                    div.style.left = Math.random() * 100 + 'vw';
+                    div.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    div.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                    document.body.appendChild(div);
+                    setTimeout(() => div.remove(), 4000);
+                }, i * 100);
+            }
+        }
+    </script>
+</body>
+</html>

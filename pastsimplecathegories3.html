@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verb Sort Challenge - Set D</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stats-bar {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .rules-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .rules-title {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .rule-card {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid;
+        }
+
+        .rule-d { background: #e3f2fd; border-color: #2196f3; }
+        .rule-ied { background: #fce4ec; border-color: #e91e63; }
+        .rule-cvc { background: #fff3e0; border-color: #ff9800; }
+        .rule-ed { background: #e8f5e9; border-color: #4caf50; }
+
+        .rule-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .game-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 1200px) {
+            .game-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .verbs-source {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .verbs-source h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .verbs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        @media (max-width: 1200px) {
+            .verbs-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .verbs-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .verb-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 5px;
+            border-radius: 10px;
+            cursor: grab;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .verb-card:hover {
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        .verb-card.dragging {
+            opacity: 0.6;
+        }
+
+        .verb-card.correct {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .verb-card.wrong {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            animation: shake 0.5s ease;
+        }
+
+        .categories-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .categories-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .category-box {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border: 4px solid transparent;
+        }
+
+        .category-box.drag-over {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .cat-d { background: #2196f3; }
+        .cat-ied { background: #e91e63; }
+        .cat-cvc { background: #ff9800; }
+        .cat-ed { background: #4caf50; }
+
+        .category-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin: 0;
+        }
+
+        .category-desc {
+            font-size: 0.8rem;
+            color: #636e72;
+        }
+
+        .drop-zone {
+            min-height: 150px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            border: 3px dashed #ddd;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #667eea;
+        }
+
+        .dropped-item {
+            background: white;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .dropped-item .past-form {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .counter {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-left: auto;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+
+        .modal-text {
+            color: #636e72;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-rule {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #b2bec3;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        .cvc-note {
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: #e65100;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">🎉</div>
+            <h3 class="modal-title" id="modalTitle">¡Correcto!</h3>
+            <p class="modal-text" id="modalText">Bien hecho</p>
+            <div class="modal-rule" id="modalRule" style="display: none;"></div>
+            <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 20px;">Continuar</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>📚 Clasificación de Verbos - Set D</h1>
+            <p style="color: white; font-size: 1.2rem;">end, fit, fail, drag, drop, dry...</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="correctCount">0</div>
+                <div class="stat-label">✅ Correctos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="wrongCount">0</div>
+                <div class="stat-label">❌ Errores</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="remainingCount">59</div>
+                <div class="stat-label">📝 Pendientes</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="percentage">0%</div>
+                <div class="stat-label">📊 Progreso</div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span style="font-weight: 700; color: #2d3436;">Progreso</span>
+                <span style="color: #667eea; font-weight: 700;" id="progressText">0/59</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="rules-container">
+            <div class="rules-title">📖 Distribución de Verbos</div>
+            <div class="rules-grid">
+                <div class="rule-card rule-d">
+                    <div class="rule-name">🔵 -D (18 verbos)</div>
+                    <div style="font-size: 0.8rem; color: #555; margin-top: 5px;">
+                        Terminan en -e<br>
+                        fire, divide, deserve, face, fade, excite...
+                    </div>
+                </div>
+                <div class="rule-card rule-ied">
+                    <div class="rule-name">🟣 -IED (3 verbos)</div>
+                    <div style="font-size: 0.8rem; color: #555; margin-top: 5px;">
+                        Consonante + Y<br>
+                        dry, fancy, empty
+                    </div>
+                </div>
+                <div class="rule-card rule-cvc">
+                    <div class="rule-name">🟠 CVC (5 verbos)</div>
+                    <div style="font-size: 0.8rem; color: #555; margin-top: 5px;">
+                        Doblan consonante<br>
+                        fit, drag, drip, drop, flap
+                    </div>
+                </div>
+                <div class="rule-card rule-ed">
+                    <div class="rule-name">🟢 -ED (33 verbos)</div>
+                    <div style="font-size: 0.8rem; color: #555; margin-top: 5px;">
+                        Regulares y grupos<br>
+                        end, fix, dream, enjoy, fill, dress...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-layout">
+            <div class="verbs-source">
+                <h2>🎯 Verbos Base (59)</h2>
+                <div class="verbs-grid" id="verbsPool"></div>
+            </div>
+
+            <div class="categories-container">
+                <!-- Categoría -D -->
+                <div class="category-box" data-category="d">
+                    <div class="category-header">
+                        <div class="category-icon cat-d">+D</div>
+                        <div style="flex: 1;">
+                            <h3 class="category-title">Terminación -D</h3>
+                            <div class="category-desc">Terminan en -e</div>
+                        </div>
+                        <span class="counter" id="countD">0/18</span>
+                    </div>
+                    <div class="drop-zone" id="zoneD">
+                        <div class="empty-state">Ej: fire, divide, deserve, face, excite, encourage...</div>
+                    </div>
+                </div>
+
+                <!-- Categoría -IED -->
+                <div class="category-box" data-category="ied">
+                    <div class="category-header">
+                        <div class="category-icon cat-ied">IED</div>
+                        <div style="flex: 1;">
+                            <h3 class="category-title">Terminación -IED</h3>
+                            <div class="category-desc">Consonante + Y final</div>
+                        </div>
+                        <span class="counter" id="countIed">0/3</span>
+                    </div>
+                    <div class="drop-zone" id="zoneIed">
+                        <div class="empty-state">Solo 3:<br>dry, fancy, empty</div>
+                    </div>
+                </div>
+
+                <!-- Categoría CVC -->
+                <div class="category-box" data-category="cvc">
+                    <div class="category-header">
+                        <div class="category-icon cat-cvc">2C</div>
+                        <div style="flex: 1;">
+                            <h3 class="category-title">Regla CVC</h3>
+                            <div class="category-desc">Doblan consonante final</div>
+                        </div>
+                        <span class="counter" id="countCvc">0/5</span>
+                    </div>
+                    <div class="cvc-note">
+                        Una sílaba CVC válido (sin w, x, y, ng, ss, ck...)
+                    </div>
+                    <div class="drop-zone" id="zoneCvc">
+                        <div class="empty-state">fit → fitted<br>drag → dragged<br>drip → dripped<br>drop → dropped<br>flap → flapped</div>
+                    </div>
+                </div>
+
+                <!-- Categoría -ED -->
+                <div class="category-box" data-category="ed">
+                    <div class="category-header">
+                        <div class="category-icon cat-ed">+ED</div>
+                        <div style="flex: 1;">
+                            <h3 class="category-title">Terminación -ED</h3>
+                            <div class="category-desc">Regulares y excepciones</div>
+                        </div>
+                        <span class="counter" id="countEd">0/33</span>
+                    </div>
+                    <div class="drop-zone" id="zoneEd">
+                        <div class="empty-state">Incluye:<br>• end (termina en d)<br>• fix (termina en x)<br>• fill (doble l)<br>• dream (diptongo)<br>• enjoy (vocal+y)<br>• dress (grupo ss)<br>• discover, fail, enter...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-success" onclick="checkAll()">✓ Verificar</button>
+            <button class="btn btn-secondary" onclick="resetGame()">🔄 Reiniciar</button>
+        </div>
+    </div>
+
+    <script>
+        const verbsList = [
+            // GRUPO -D (18 verbos): Terminan exactamente en -e
+            {base: 'fire', past: 'fired', category: 'd', rule: 'Termina en -e'},
+            {base: 'exercise', past: 'exercised', category: 'd', rule: 'Termina en -e'},
+            {base: 'divide', past: 'divided', category: 'd', rule: 'Termina en -e'},
+            {base: 'deserve', past: 'deserved', category: 'd', rule: 'Termina en -e'},
+            {base: 'educate', past: 'educated', category: 'd', rule: 'Termina en -e'},
+            {base: 'excuse', past: 'excused', category: 'd', rule: 'Termina en -e'},
+            {base: 'explode', past: 'exploded', category: 'd', rule: 'Termina en -e'},
+            {base: 'describe', past: 'described', category: 'd', rule: 'Termina en -e'},
+            {base: 'escape', past: 'escaped', category: 'd', rule: 'Termina en -e'},
+            {base: 'excite', past: 'excited', category: 'd', rule: 'Termina en -e'},
+            {base: 'disagree', past: 'disagreed', category: 'd', rule: 'Termina en -e (ee)'},
+            {base: 'face', past: 'faced', category: 'd', rule: 'Termina en -e'},
+            {base: 'fade', past: 'faded', category: 'd', rule: 'Termina en -e'},
+            {base: 'encourage', past: 'encouraged', category: 'd', rule: 'Termina en -e'},
+            {base: 'examine', past: 'examined', category: 'd', rule: 'Termina en -e'},
+            {base: 'dislike', past: 'disliked', category: 'd', rule: 'Termina en -e'},
+            {base: 'disapprove', past: 'disapproved', category: 'd', rule: 'Termina en -e'},
+            {base: 'file', past: 'filed', category: 'd', rule: 'Termina en -e'},
+            
+            // GRUPO -IED (3 verbos): Consonante + Y
+            {base: 'dry', past: 'dried', category: 'ied', rule: 'Consonante (r) + Y'},
+            {base: 'fancy', past: 'fancied', category: 'ied', rule: 'Consonante (c) + Y'},
+            {base: 'empty', past: 'emptied', category: 'ied', rule: 'Consonante (t) + Y'},
+            
+            // GRUPO CVC (5 verbos): Una sílaba, CVC simple válido
+            {base: 'fit', past: 'fitted', category: 'cvc', rule: 'CVC: f-i-t (dobla t)'},
+            {base: 'drag', past: 'dragged', category: 'cvc', rule: 'CVC: d-r-a-g (dobla g)'},
+            {base: 'drip', past: 'dripped', category: 'cvc', rule: 'CVC: d-r-i-p (dobla p)'},
+            {base: 'drop', past: 'dropped', category: 'cvc', rule: 'CVC: d-r-o-p (dobla p)'},
+            {base: 'flap', past: 'flapped', category: 'cvc', rule: 'CVC: f-l-a-p (dobla p)'},
+            
+            // GRUPO -ED (33 verbos): Regulares y excepciones
+            {base: 'end', past: 'ended', category: 'ed', rule: 'Termina en d (no se dobla)'},
+            {base: 'fail', past: 'failed', category: 'ed', rule: 'Regular (diptongo ai)'},
+            {base: 'discover', past: 'discovered', category: 'ed', rule: '2 sílabas'},
+            {base: 'entertain', past: 'entertained', category: 'ed', rule: '3 sílabas'},
+            {base: 'fill', past: 'filled', category: 'ed', rule: 'Ya tiene doble l (CVCC)'},
+            {base: 'enter', past: 'entered', category: 'ed', rule: '2 sílabas'},
+            {base: 'drain', past: 'drained', category: 'ed', rule: 'Diptongo ai'},
+            {base: 'develop', past: 'developed', category: 'ed', rule: '2 sílabas'},
+            {base: 'dress', past: 'dressed', category: 'ed', rule: 'Grupo ss final'},
+            {base: 'dust', past: 'dusted', category: 'ed', rule: 'Grupo st'},
+            {base: 'doubt', past: 'doubted', category: 'ed', rule: 'Grupo bt'},
+            {base: 'destroy', past: 'destroyed', category: 'ed', rule: 'Vocal + Y (no cambia)'},
+            {base: 'detect', past: 'detected', category: 'ed', rule: '2 sílabas'},
+            {base: 'expect', past: 'expected', category: 'ed', rule: '2 sílabas'},
+            {base: 'fix', past: 'fixed', category: 'ed', rule: 'Termina en x (no CVC)'},
+            {base: 'dislike', past: 'disliked', category: 'd', rule: 'Termina en -e'}, // Ya está en D
+            {base: 'enjoy', past: 'enjoyed', category: 'ed', rule: 'Vocal + Y (no cambia)'},
+            {base: 'extend', past: 'extended', category: 'ed', rule: '2 sílabas'},
+            {base: 'fetch', past: 'fetched', category: 'ed', rule: 'Dígrafo ch'},
+            {base: 'fasten', past: 'fastened', category: 'ed', rule: '2 sílabas'},
+            {base: 'dream', past: 'dreamed', category: 'ed', rule: 'Diptongo ea'},
+            {base: 'employ', past: 'employed', category: 'ed', rule: 'Vocal + Y (no cambia)'},
+            {base: 'embarrass', past: 'embarrassed', category: 'ed', rule: 'Grupo ss'},
+            {base: 'drown', past: 'drowned', category: 'ed', rule: 'Grupo wn'},
+            {base: 'explain', past: 'explained', category: 'ed', rule: '2 sílabas'},
+            {base: 'flash', past: 'flashed', category: 'ed', rule: 'Dígrafo sh'},
+            {base: 'disappear', past: 'disappeared', category: 'ed', rule: '3 sílabas'},
+            {base: 'exist', past: 'existed', category: 'ed', rule: '2 sílabas'},
+            {base: 'expand', past: 'expanded', category: 'ed', rule: '2 sílabas'},
+            {base: 'fear', past: 'feared', category: 'ed', rule: 'Diptongo ea'},
+            {base: 'desert', past: 'deserted', category: 'ed', rule: '2 sílabas'},
+            {base: 'depend', past: 'depended', category: 'ed', rule: '2 sílabas'},
+            {base: 'float', past: 'floated', category: 'ed', rule: 'Diptongo oa'},
+            {base: 'earn', past: 'earned', category: 'ed', rule: 'Grupo rn'}
+        ];
+
+        // Eliminar duplicados si los hay (dislike estaba duplicado en mi lista mental)
+        const uniqueVerbs = verbsList.filter((v, i, a) => a.findIndex(t => t.base === v.base) === i);
+
+        let draggedElement = null;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let placedVerbs = new Set();
+        let currentVerbs = [];
+
+        function init() {
+            currentVerbs = [...uniqueVerbs].sort(() => Math.random() - 0.5);
+            renderVerbs();
+            updateStats();
+        }
+
+        function renderVerbs() {
+            const pool = document.getElementById('verbsPool');
+            pool.innerHTML = '';
+            
+            currentVerbs.forEach(verb => {
+                if (!placedVerbs.has(verb.base)) {
+                    const card = document.createElement('div');
+                    card.className = 'verb-card';
+                    card.draggable = true;
+                    card.dataset.verb = verb.base;
+                    card.dataset.category = verb.category;
+                    card.textContent = verb.base;
+                    
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('dragend', handleDragEnd);
+                    
+                    card.addEventListener('touchstart', handleTouchStart, {passive: false});
+                    card.addEventListener('touchmove', handleTouchMove, {passive: false});
+                    card.addEventListener('touchend', handleTouchEnd);
+                    
+                    pool.appendChild(card);
+                }
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        let touchEl = null;
+        let touchOffset = {};
+
+        function handleTouchStart(e) {
+            touchEl = e.target;
+            const touch = e.touches[0];
+            const rect = touchEl.getBoundingClientRect();
+            touchOffset = {
+                x: touch.clientX - rect.left,
+                y: touch.clientY - rect.top
+            };
+            touchEl.style.position = 'fixed';
+            touchEl.style.zIndex = '1000';
+            touchEl.classList.add('dragging');
+            e.preventDefault();
+        }
+
+        function handleTouchMove(e) {
+            if (!touchEl) return;
+            const touch = e.touches[0];
+            touchEl.style.left = (touch.clientX - touchOffset.x) + 'px';
+            touchEl.style.top = (touch.clientY - touchOffset.y) + 'px';
+            e.preventDefault();
+        }
+
+        function handleTouchEnd(e) {
+            if (!touchEl) return;
+            
+            const touch = e.changedTouches[0];
+            const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const zone = elemBelow?.closest('.drop-zone');
+            
+            if (zone) {
+                const category = zone.id.replace('zone', '').toLowerCase();
+                handleDrop(touchEl, zone, category);
+            }
+            
+            touchEl.style.position = '';
+            touchEl.style.zIndex = '';
+            touchEl.style.left = '';
+            touchEl.style.top = '';
+            touchEl.classList.remove('dragging');
+            touchEl = null;
+        }
+
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', e => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+            
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+            
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const category = zone.id.replace('zone', '').toLowerCase();
+                if (draggedElement) handleDrop(draggedElement, zone, category);
+            });
+        });
+
+        function handleDrop(card, zone, category) {
+            const verbData = uniqueVerbs.find(v => v.base === card.dataset.verb);
+            const isCorrect = verbData.category === category;
+            
+            if (isCorrect) {
+                correctCount++;
+                placedVerbs.add(verbData.base);
+                card.classList.add('correct');
+                
+                const emptyState = zone.querySelector('.empty-state');
+                if (emptyState) emptyState.remove();
+                
+                const item = document.createElement('div');
+                item.className = 'dropped-item';
+                item.innerHTML = `<span>${verbData.base}</span><span class="past-form">${verbData.past}</span>`;
+                zone.appendChild(item);
+                
+                card.remove();
+                
+                document.getElementById('modalIcon').textContent = '🎉';
+                document.getElementById('modalTitle').textContent = '¡Correcto!';
+                document.getElementById('modalTitle').style.color = '#27ae60';
+                document.getElementById('modalText').textContent = `"${verbData.base}" → ${verbData.past}`;
+                document.getElementById('modalRule').textContent = '✓ ' + verbData.rule;
+                document.getElementById('modalRule').style.display = 'block';
+                document.getElementById('feedbackModal').classList.add('show');
+                
+                createConfetti();
+            } else {
+                wrongCount++;
+                card.classList.add('wrong');
+                
+                document.getElementById('modalIcon').textContent = '😅';
+                document.getElementById('modalTitle').textContent = '¡Error!';
+                document.getElementById('modalTitle').style.color = '#e74c3c';
+                document.getElementById('modalText').textContent = `"${verbData.base}" no va aquí`;
+                document.getElementById('modalRule').textContent = 'ℹ️ ' + verbData.rule;
+                document.getElementById('modalRule').style.display = 'block';
+                document.getElementById('feedbackModal').classList.add('show');
+                
+                setTimeout(() => {
+                    card.classList.remove('wrong');
+                }, 1000);
+            }
+            
+            updateStats();
+        }
+
+        function closeModal() {
+            document.getElementById('feedbackModal').classList.remove('show');
+        }
+
+        function updateStats() {
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('wrongCount').textContent = wrongCount;
+            document.getElementById('remainingCount').textContent = uniqueVerbs.length - placedVerbs.size;
+            const pct = Math.round((placedVerbs.size / uniqueVerbs.length) * 100);
+            document.getElementById('percentage').textContent = pct + '%';
+            document.getElementById('progressText').textContent = `${placedVerbs.size}/${uniqueVerbs.length}`;
+            document.getElementById('progressBar').style.width = pct + '%';
+        }
+
+        function createConfetti() {
+            const colors = ['#f093fb', '#f5576c', '#4facfe', '#43e97b', '#ff9800'];
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const c = document.createElement('div');
+                    c.style.position = 'fixed';
+                    c.style.left = Math.random() * 100 + 'vw';
+                    c.style.top = '-10px';
+                    c.style.width = '10px';
+                    c.style.height = '10px';
+                    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    c.style.animation = 'shake 3s linear forwards';
+                    c.style.zIndex = '9999';
+                    document.body.appendChild(c);
+                    setTimeout(() => c.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        function checkAll() {
+            const remaining = uniqueVerbs.length - placedVerbs.size;
+            if (remaining === 0) {
+                alert('🎉 ¡Completado!');
+            } else {
+                alert(`⏳ Faltan ${remaining} verbos`);
+            }
+        }
+
+        function resetGame() {
+            if (!confirm('¿Reiniciar?')) return;
+            placedVerbs.clear();
+            correctCount = 0;
+            wrongCount = 0;
+            document.querySelectorAll('.drop-zone').forEach(z => z.innerHTML = '<div class="empty-state">Arrastra aquí</div>');
+            init();
+        }
+
+        init();
+    </script>
+</body>
+</html>

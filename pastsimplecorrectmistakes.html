@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Detective - Past Simple Regular Verbs Only</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Nunito:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #059669;
+            --primary-dark: #047857;
+            --secondary: #0d9488;
+            --accent: #14b8a6;
+            --success: #10b981;
+            --error: #ef4444;
+            --dark: #064e3b;
+            --light: #f0fdf4;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #047857 0%, #059669 50%, #14b8a6 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+            border: 2px solid rgba(20, 184, 166, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #065f46;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .regular-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: linear-gradient(135deg, var(--dark), #065f46);
+            padding: 1rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            color: white;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        .game-area {
+            background: #f0fdf4;
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            border: 3px solid #a7f3d0;
+        }
+
+        .level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .type-affirmative { background: #dcfce7; color: #166534; }
+        .type-negative { background: #fee2e2; color: #991b1b; }
+        .type-question { background: #dbeafe; color: #1e40af; }
+
+        .error-display {
+            background: white;
+            border: 3px solid #fecaca;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-label {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--error);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        .sentence-text {
+            font-size: 1.4rem;
+            color: var(--dark);
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .error-word {
+            color: var(--error);
+            text-decoration: line-through;
+            text-decoration-thickness: 3px;
+        }
+
+        .correction-area {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .answer-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem 1.5rem;
+            border: 3px solid #a7f3d0;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
+        }
+
+        .answer-input.correct {
+            border-color: var(--success);
+            background: #f0fdf4;
+        }
+
+        .answer-input.wrong {
+            border-color: var(--error);
+            animation: shake 0.5s ease;
+        }
+
+        .feedback-box {
+            background: #f0fdf4;
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 1rem;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .hint-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .hint-box.show {
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            font-family: 'Nunito', sans-serif;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.5);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #a7f3d0;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-hint {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #d1fae5;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .timer {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            color: #fbbf24;
+        }
+
+        .grade-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .grade-5 { color: #059669; text-shadow: 0 0 20px rgba(5, 150, 105, 0.5); }
+        .grade-4 { color: #10b981; }
+        .grade-3 { color: #f59e0b; }
+        .grade-2 { color: #f97316; }
+        .grade-1 { color: #ef4444; }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2rem; }
+            .game-container { padding: 1.5rem; }
+            .sentence-text { font-size: 1.2rem; }
+            .input-group { flex-direction: column; }
+            .answer-input { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header class="header">
+            <h1>📝 Regular Detective</h1>
+            <p class="subtitle">Corrige errores - Verbos Regulares (-ed)</p>
+            <span class="regular-badge">Solo verbos regulares</span>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-value" id="level">1</span>
+                <span class="stat-label">Caso</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="score">0</span>
+                <span class="stat-label">Puntos</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="streak">0</span>
+                <span class="stat-label">Racha</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="grade">0.0</span>
+                <span class="stat-label">Nota</span>
+            </div>
+            <div class="timer" id="timer">00:00</div>
+        </div>
+
+        <div class="game-area" id="game-area">
+            <div class="level-badge" id="type-badge">
+                <span id="type-icon">✅</span>
+                <span id="type-text">Afirmativo</span>
+            </div>
+
+            <div class="error-display">
+                <span class="error-label">❌ ERRÓNEO</span>
+                <p class="sentence-text" id="error-sentence">
+                    She play tennis yesterday.
+                </p>
+            </div>
+
+            <div class="hint-box" id="hint-box">
+                💡 <strong>Pista:</strong> <span id="hint-text"></span>
+            </div>
+
+            <div class="feedback-box" id="feedback-box">
+                ✅ <strong>¡Correcto!</strong> <span id="feedback-text"></span>
+            </div>
+
+            <div class="correction-area">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: #065f46;">
+                    Escribe la oración corregida:
+                </label>
+                <div class="input-group">
+                    <input type="text" 
+                           class="answer-input" 
+                           id="answer-input" 
+                           placeholder="Escribe aquí la corrección..."
+                           autocomplete="off">
+                    <button class="btn-success" onclick="game.checkAnswer()" id="check-btn">
+                        ✓ Verificar
+                    </button>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn-hint" onclick="game.showHint()" id="hint-btn">
+                    💡 Pista
+                </button>
+                <button class="btn-secondary" onclick="game.skipLevel()" id="skip-btn">
+                    ⏭ Saltar
+                </button>
+                <button class="btn-primary" onclick="game.nextLevel()" id="next-btn" style="display: none;">
+                    Siguiente caso ➜
+                </button>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        class RegularPastDetective {
+            constructor() {
+                this.levels = [
+                    // AFIRMATIVOS (10) - Error: Falta el -ed
+                    {
+                        type: 'affirmative',
+                        error: 'She play tennis yesterday.',
+                        correct: 'She played tennis yesterday.',
+                        hint: 'Los verbos regulares llevan -ed en pasado (play → played)',
+                        explanation: 'Play + ed = played',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'affirmative',
+                        error: 'They watch a movie last night.',
+                        correct: 'They watched a movie last night.',
+                        hint: 'Añade -ed al final (watch → watched)',
+                        explanation: 'Watch termina en ch, pero como es regular solo añade -ed',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'affirmative',
+                        error: 'We dance at the party.',
+                        correct: 'We danced at the party.',
+                        hint: 'Dance + d (termina en e, solo añade d)',
+                        explanation: 'Dance termina en e, por eso solo se añade -d: danced',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'affirmative',
+                        error: 'He study for the exam.',
+                        correct: 'He studied for the exam.',
+                        hint: 'Consonante + y cambia a -ied (study → studied)',
+                        explanation: 'Study: y precededida de consonante (d) cambia a i + ed = studied',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'affirmative',
+                        error: 'The bus stop at the station.',
+                        correct: 'The bus stopped at the station.',
+                        hint: 'Consonante + vowel + consonante (CVC) dobla la última consonante: stop → stopped',
+                        explanation: 'Stop (CVC) dobla la p: stopped',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'affirmative',
+                        error: 'I carry the bags to the car.',
+                        correct: 'I carried the bags to the car.',
+                        hint: 'Consonante + y → ies (carry → carried)',
+                        explanation: 'Carry: r es consonante, cambia y por i + ed = carried',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'affirmative',
+                        error: 'She plan a trip to Paris.',
+                        correct: 'She planned a trip to Paris.',
+                        hint: 'CVC (consonante-vocal-consonante) dobla la última letra: plan → planned',
+                        explanation: 'Plan (CVC) dobla la n: planned',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'affirmative',
+                        error: 'They enjoy the concert very much.',
+                        correct: 'They enjoyed the concert very much.',
+                        hint: 'Vocal + y (enjoy) solo añade -ed (no cambia a ied)',
+                        explanation: 'Enjoy termina en vocal + y, solo añade -ed: enjoyed',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'affirmative',
+                        error: 'He arrive late to the meeting.',
+                        correct: 'He arrived late to the meeting.',
+                        hint: 'Verbo terminado en e: arrive + d = arrived',
+                        explanation: 'Arrive termina en e, solo añade -d: arrived',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'affirmative',
+                        error: 'The children jump in the pool.',
+                        correct: 'The children jumped in the pool.',
+                        hint: 'Normal + ed (jump → jumped)',
+                        explanation: 'Jump es regular simple: jumped',
+                        maxPoints: 100
+                    },
+
+                    // NEGATIVOS (10) - Error: didn't + verbo con -ed
+                    {
+                        type: 'negative',
+                        error: 'She didn\'t played tennis.',
+                        correct: 'She didn\'t play tennis.',
+                        hint: 'Después de didn\'t, el verbo va en base (sin ed): play',
+                        explanation: 'Didn\'t + verbo base (play). El did ya marca el pasado.',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'negative',
+                        error: 'They didn\'t watched the movie.',
+                        correct: 'They didn\'t watch the movie.',
+                        hint: 'Didn\'t + watch (sin ed)',
+                        explanation: 'Con didn\'t usar: watch (no watched)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'negative',
+                        error: 'We didn\'t danced at the party.',
+                        correct: 'We didn\'t dance at the party.',
+                        hint: 'Didn\'t + dance (infinitivo)',
+                        explanation: 'Didn\'t dance (dance sin d ni ed extra)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'negative',
+                        error: 'He didn\'t studied for the test.',
+                        correct: 'He didn\'t study for the test.',
+                        hint: 'Didn\'t + study (sin ed)',
+                        explanation: 'Didn\'t study (study mantiene la y, no lleva ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'negative',
+                        error: 'The bus didn\'t stopped.',
+                        correct: 'The bus didn\'t stop.',
+                        hint: 'Didn\'t + stop (sin doblar ni ed)',
+                        explanation: 'Didn\'t stop (stop sin ed y sin doblar la p)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'negative',
+                        error: 'I didn\'t carried the bags.',
+                        correct: 'I didn\'t carry the bags.',
+                        hint: 'Didn\'t + carry (sin ed)',
+                        explanation: 'Didn\'t carry (carry sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'negative',
+                        error: 'She didn\'t planned the party.',
+                        correct: 'She didn\'t plan the party.',
+                        hint: 'Didn\'t + plan (sin doblar la n ni ed)',
+                        explanation: 'Didn\'t plan (plan simple, sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'negative',
+                        error: 'They didn\'t enjoyed the food.',
+                        correct: 'They didn\'t enjoy the food.',
+                        hint: 'Didn\'t + enjoy (sin ed)',
+                        explanation: 'Didn\'t enjoy (enjoy sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'negative',
+                        error: 'He didn\'t arrived on time.',
+                        correct: 'He didn\'t arrive on time.',
+                        hint: 'Didn\'t + arrive (sin d ni ed)',
+                        explanation: 'Didn\'t arrive (arrive sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'negative',
+                        error: 'The kids didn\'t jumped.',
+                        correct: 'The kids didn\'t jump.',
+                        hint: 'Didn\'t + jump (sin ed)',
+                        explanation: 'Didn\'t jump (jump sin ed)',
+                        maxPoints: 100
+                    },
+
+                    // INTERROGATIVOS (10) - Error: Did + sujeto + verbo con -ed
+                    {
+                        type: 'question',
+                        error: 'Did she played tennis yesterday?',
+                        correct: 'Did she play tennis yesterday?',
+                        hint: 'Did + she + verbo base (play, sin ed)',
+                        explanation: 'Did ya es pasado, el verbo va en base: play',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'question',
+                        error: 'Did they watched the movie?',
+                        correct: 'Did they watch the movie?',
+                        hint: 'Did + they + watch (sin ed)',
+                        explanation: 'Did they watch? (watch sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'question',
+                        error: 'Did he danced at the party?',
+                        correct: 'Did he dance at the party?',
+                        hint: 'Did + he + dance (sin ed)',
+                        explanation: 'Did he dance? (dance sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'question',
+                        error: 'Did you studied for the exam?',
+                        correct: 'Did you study for the exam?',
+                        hint: 'Did + you + study (sin ed)',
+                        explanation: 'Did you study? (study sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'question',
+                        error: 'Did the bus stopped at the station?',
+                        correct: 'Did the bus stop at the station?',
+                        hint: 'Did + it + stop (sin ed, sin doblar)',
+                        explanation: 'Did it stop? (stop simple)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'question',
+                        error: 'Did she carried the boxes?',
+                        correct: 'Did she carry the boxes?',
+                        hint: 'Did + she + carry (sin ed)',
+                        explanation: 'Did she carry? (carry sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'question',
+                        error: 'Did he planned the trip?',
+                        correct: 'Did he plan the trip?',
+                        hint: 'Did + he + plan (sin ed)',
+                        explanation: 'Did he plan? (plan sin ed ni doble n)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'question',
+                        error: 'Did they enjoyed the concert?',
+                        correct: 'Did they enjoy the concert?',
+                        hint: 'Did + they + enjoy (sin ed)',
+                        explanation: 'Did they enjoy? (enjoy sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'question',
+                        error: 'Did she arrived late?',
+                        correct: 'Did she arrive late?',
+                        hint: 'Did + she + arrive (sin ed)',
+                        explanation: 'Did she arrive? (arrive sin ed)',
+                        maxPoints: 100
+                    },
+                    {
+                        type: 'question',
+                        error: 'Did the children jumped in the pool?',
+                        correct: 'Did the children jump in the pool?',
+                        hint: 'Did + they + jump (sin ed)',
+                        explanation: 'Did they jump? (jump sin ed)',
+                        maxPoints: 100
+                    }
+                ];
+
+                this.currentLevel = 0;
+                this.score = 0;
+                this.streak = 0;
+                this.timeElapsed = 0;
+                this.timerInterval = null;
+                this.attempts = 0;
+                this.levelPoints = 0;
+                this.hintsUsed = 0;
+                this.skipped = false;
+                
+                this.init();
+            }
+
+            init() {
+                this.startTimer();
+                this.loadLevel();
+                
+                document.getElementById('answer-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        if (document.getElementById('next-btn').style.display === 'none') {
+                            this.checkAnswer();
+                        } else {
+                            this.nextLevel();
+                        }
+                    }
+                });
+            }
+
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    this.timeElapsed++;
+                    const mins = Math.floor(this.timeElapsed / 60).toString().padStart(2, '0');
+                    const secs = (this.timeElapsed % 60).toString().padStart(2, '0');
+                    document.getElementById('timer').textContent = `${mins}:${secs}`;
+                }, 1000);
+            }
+
+            loadLevel() {
+                const level = this.levels[this.currentLevel];
+                
+                document.getElementById('level').textContent = this.currentLevel + 1;
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('streak').textContent = this.streak;
+                document.getElementById('error-sentence').textContent = level.error;
+                
+                const input = document.getElementById('answer-input');
+                input.value = '';
+                input.className = 'answer-input';
+                input.disabled = false;
+                input.focus();
+                
+                document.getElementById('feedback-box').classList.remove('show');
+                document.getElementById('hint-box').classList.remove('show');
+                document.getElementById('next-btn').style.display = 'none';
+                document.getElementById('check-btn').style.display = 'inline-flex';
+                document.getElementById('hint-btn').style.display = 'inline-flex';
+                document.getElementById('skip-btn').style.display = 'inline-flex';
+                
+                const badge = document.getElementById('type-badge');
+                const typeText = document.getElementById('type-text');
+                
+                if (level.type === 'affirmative') {
+                    badge.className = 'level-badge type-affirmative';
+                    typeText.textContent = 'Afirmativo (+ed)';
+                } else if (level.type === 'negative') {
+                    badge.className = 'level-badge type-negative';
+                    typeText.textContent = 'Negativo (didn\'t + base)';
+                } else {
+                    badge.className = 'level-badge type-question';
+                    typeText.textContent = 'Interrogativo (Did + base)';
+                }
+                
+                this.updateProgress();
+                this.updateGrade();
+                this.attempts = 0;
+                this.levelPoints = 0;
+                this.hintsUsed = 0;
+                this.skipped = false;
+            }
+
+            normalizeText(text) {
+                return text.toLowerCase()
+                    .replace(/[.,!?]/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
+
+            checkAnswer() {
+                const level = this.levels[this.currentLevel];
+                const input = document.getElementById('answer-input');
+                const userAnswer = input.value.trim();
+                
+                if (!userAnswer) return;
+                
+                const normalizedUser = this.normalizeText(userAnswer);
+                const normalizedCorrect = this.normalizeText(level.correct);
+                
+                if (normalizedUser === normalizedCorrect) {
+                    input.classList.add('correct');
+                    input.disabled = true;
+                    
+                    // Calcular puntos base según intentos
+                    let points = Math.max(100 - (this.attempts * 25), 20);
+                    
+                    // Penalización por pistas usadas
+                    points = Math.max(points - (this.hintsUsed * 20), 10);
+                    
+                    // Penalización por saltar
+                    if (this.skipped) {
+                        points = Math.max(points - 30, 5);
+                    }
+                    
+                    // Bonus por racha
+                    const streakBonus = this.streak * 2;
+                    points += streakBonus;
+                    
+                    this.levelPoints = points;
+                    this.score += points;
+                    this.streak++;
+                    
+                    document.getElementById('score').textContent = this.score;
+                    document.getElementById('streak').textContent = this.streak;
+                    
+                    document.getElementById('feedback-text').textContent = 
+                        `${level.explanation} (+${points} pts)`;
+                    document.getElementById('feedback-box').classList.add('show');
+                    document.getElementById('next-btn').style.display = 'inline-flex';
+                    document.getElementById('check-btn').style.display = 'none';
+                    document.getElementById('hint-btn').style.display = 'none';
+                    document.getElementById('skip-btn').style.display = 'none';
+                    
+                    this.updateGrade();
+                    
+                    if (this.streak % 5 === 0) this.celebrate();
+                    
+                } else {
+                    input.classList.add('wrong');
+                    this.streak = 0;
+                    document.getElementById('streak').textContent = 0;
+                    this.attempts++;
+                    
+                    setTimeout(() => {
+                        input.classList.remove('wrong');
+                    }, 500);
+                    
+                    if (this.attempts >= 2) {
+                        document.getElementById('hint-text').textContent = level.hint;
+                        document.getElementById('hint-box').classList.add('show');
+                    }
+                }
+            }
+
+            showHint() {
+                const level = this.levels[this.currentLevel];
+                document.getElementById('hint-text').textContent = level.hint;
+                document.getElementById('hint-box').classList.add('show');
+                this.hintsUsed++;
+            }
+
+            skipLevel() {
+                this.skipped = true;
+                this.streak = 0;
+                document.getElementById('streak').textContent = 0;
+                
+                // Mostrar respuesta correcta
+                const level = this.levels[this.currentLevel];
+                const input = document.getElementById('answer-input');
+                input.value = level.correct;
+                input.classList.add('correct');
+                input.disabled = true;
+                
+                document.getElementById('feedback-text').textContent = 
+                    `Respuesta correcta: ${level.explanation} (Saltado - 5 pts)`;
+                document.getElementById('feedback-box').classList.add('show');
+                document.getElementById('next-btn').style.display = 'inline-flex';
+                document.getElementById('check-btn').style.display = 'none';
+                document.getElementById('hint-btn').style.display = 'none';
+                document.getElementById('skip-btn').style.display = 'none';
+                
+                this.levelPoints = 5;
+                this.score += 5;
+                document.getElementById('score').textContent = this.score;
+                this.updateGrade();
+            }
+
+            nextLevel() {
+                if (this.currentLevel < this.levels.length - 1) {
+                    this.currentLevel++;
+                    this.loadLevel();
+                } else {
+                    this.showVictory();
+                }
+            }
+
+            updateProgress() {
+                const progress = ((this.currentLevel + 1) / this.levels.length) * 100;
+                document.getElementById('progress').style.width = `${progress}%`;
+            }
+
+            updateGrade() {
+                const maxPossibleScore = (this.currentLevel + 1) * 100;
+                const percentage = Math.min((this.score / maxPossibleScore) * 100, 100);
+                const grade = Math.min((percentage / 100) * 5, 5.0);
+                
+                const gradeElement = document.getElementById('grade');
+                gradeElement.textContent = grade.toFixed(1);
+                
+                // Color según nota
+                gradeElement.className = 'stat-value';
+                if (grade >= 4.5) gradeElement.classList.add('grade-5');
+                else if (grade >= 4.0) gradeElement.classList.add('grade-4');
+                else if (grade >= 3.0) gradeElement.classList.add('grade-3');
+                else if (grade >= 2.0) gradeElement.classList.add('grade-2');
+                else gradeElement.classList.add('grade-1');
+            }
+
+            getFinalGrade() {
+                const maxPossibleScore = this.levels.length * 100;
+                const percentage = Math.min((this.score / maxPossibleScore) * 100, 100);
+                return Math.min((percentage / 100) * 5, 5.0);
+            }
+
+            celebrate() {
+                const colors = ['#059669', '#10b981', '#14b8a6', '#0d9488', '#047857'];
+                
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.style.cssText = `
+                            position: fixed;
+                            left: ${Math.random() * 100}vw;
+                            top: -10px;
+                            width: ${Math.random() * 10 + 5}px;
+                            height: ${Math.random() * 10 + 5}px;
+                            background: ${colors[Math.floor(Math.random() * colors.length)]};
+                            border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                            pointer-events: none;
+                            z-index: 9999;
+                            animation: confetti-fall ${Math.random() * 3 + 2}s linear forwards;
+                        `;
+                        document.body.appendChild(confetti);
+                        setTimeout(() => confetti.remove(), 5000);
+                    }, i * 30);
+                }
+            }
+
+            showVictory() {
+                clearInterval(this.timerInterval);
+                const finalGrade = this.getFinalGrade();
+                const gradeClass = finalGrade >= 4.5 ? 'grade-5' : 
+                                  finalGrade >= 4.0 ? 'grade-4' : 
+                                  finalGrade >= 3.0 ? 'grade-3' : 
+                                  finalGrade >= 2.0 ? 'grade-2' : 'grade-1';
+                
+                let message = '';
+                if (finalGrade >= 4.5) message = '¡Excelente! Dominas perfectamente los verbos regulares';
+                else if (finalGrade >= 4.0) message = '¡Muy bien! Tienes un buen dominio del pasado regular';
+                else if (finalGrade >= 3.0) message = '¡Bien! Sigue practicando para mejorar';
+                else if (finalGrade >= 2.0) message = 'Necesitas más práctica con los verbos regulares';
+                else message = 'Te recomiendo repasar las reglas del Past Simple';
+                
+                document.getElementById('game-area').innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🏆</div>
+                        <h2 style="color: #059669; font-size: 2.5rem; margin-bottom: 1rem; font-family: 'Fredoka', sans-serif;">
+                            ¡Evaluación Completada!
+                        </h2>
+                        
+                        <div class="grade-display ${gradeClass}">
+                            ${finalGrade.toFixed(1)}
+                        </div>
+                        <p style="font-size: 1.1rem; color: #065f46; margin-bottom: 2rem; font-weight: 600;">
+                            ${message}
+                        </p>
+                        
+                        <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 15px; margin: 1.5rem 0; border: 2px solid #a7f3d0; text-align: left;">
+                            <h3 style="color: #047857; margin-bottom: 1rem; font-family: 'Fredoka', sans-serif;">📊 Resumen Final:</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; color: #065f46;">
+                                <div><strong>Puntuación Total:</strong> ${this.score} pts</div>
+                                <div><strong>Tiempo:</strong> ${document.getElementById('timer').textContent}</div>
+                                <div><strong>Casos Resueltos:</strong> ${this.currentLevel + 1}/${this.levels.length}</div>
+                                <div><strong>Racha Máxima:</strong> ${this.streak}</div>
+                            </div>
+                        </div>
+                        
+                        <button onclick="location.reload()" class="btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                            Intentar de Nuevo 🔄
+                        </button>
+                    </div>
+                `;
+                
+                this.celebrate();
+            }
+        }
+
+        const game = new RegularPastDetective();
+    </script>
+    
+    <style>
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</body>
+</html>

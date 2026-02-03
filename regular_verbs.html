@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regular Verbs Challenge</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+        }
+        
+        .hidden { display: none !important; }
+        
+        button {
+            padding: 15px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-weight: bold;
+        }
+        
+        button:hover { transform: scale(1.05); }
+        
+        .btn-primary { background: #ffd700; color: #333; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-info { background: #17a2b8; color: white; }
+        
+        /* Screens */
+        .screen {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            box-sizing: border-box;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+        
+        .screen.active { display: flex; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2.5rem; }
+        h2 { text-align: center; color: #ffd700; margin-bottom: 20px; }
+        
+        /* Cards */
+        .card {
+            background: white;
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .verb-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #764ba2;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+        
+        .rule-tag {
+            background: #ffeaa7;
+            color: #d63031;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        /* Input */
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.3rem;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px 0;
+            text-transform: lowercase;
+            box-sizing: border-box;
+        }
+        
+        input.correct { border-color: #28a745; background: #d4edda; }
+        input.wrong { border-color: #dc3545; background: #f8d7da; }
+        
+        /* Options */
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 3px solid #dee2e6;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .option:hover { background: #e9ecef; border-color: #764ba2; }
+        .option.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .option.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .stat-item { 
+            background: rgba(255,255,255,0.2); 
+            padding: 10px 20px; 
+            border-radius: 10px; 
+        }
+        
+        /* Progress */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #ffd700;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        /* Level selector */
+        .levels {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .level-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .level-btn:hover:not(.locked) {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(10px);
+            border-color: #ffd700;
+        }
+        
+        .level-btn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+        
+        .level-btn.completed {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.3);
+        }
+        
+        .level-number {
+            background: #ffd700;
+            color: #333;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- START SCREEN -->
+    <div id="startScreen" class="screen active">
+        <h1>🎮 REGULAR VERBS</h1>
+        <h2>Practica los 59 verbos</h2>
+        <div style="font-size: 4rem; margin: 20px;">📚✏️🎯</div>
+        <button class="btn-primary" onclick="showLevels()">JUGAR</button>
+        <button class="btn-info" onclick="showVerbList()">VER LISTA</button>
+    </div>
+
+    <!-- VERB LIST SCREEN -->
+    <div id="listScreen" class="screen">
+        <h2>📋 Tus 59 Verbos</h2>
+        <div class="card" style="max-height: 60vh; overflow-y: auto; text-align: left;">
+            <h3 style="color: #764ba2; margin-top: 0;">🟢 REGLA 1: General (+ed) - 32 verbos</h3>
+            <p style="line-height: 2; font-size: 0.95rem;">
+                end→ended, fail→failed, discover→discovered, entertain→entertained, enter→entered, drain→drained, develop→developed, expect→expected, encourage→encouraged, extend→extended, fetch→fetched, fasten→fastened, explain→explained, flash→flashed, disappear→disappeared, exist→existed, expand→expanded, fear→feared, desert→deserted, depend→depended, disagree→disagreed, float→floated, earn→earned, dust→dusted, destroy→destroyed, dream→dreamed, employ→employed, embarrass→embarrassed, drown→drowned, doubt→doubted, detect→detected, enjoy→enjoyed
+            </p>
+            
+            <h3 style="color: #007bff;">🔵 REGLA 2: Terminan en e (+d) - 16 verbos</h3>
+            <p style="line-height: 2; font-size: 0.95rem;">
+                fire→fired, exercise→exercised, divide→divided, examine→examined, educate→educated, dislike→disliked, deserve→deserved, excuse→excused, explode→exploded, describe→described, disapprove→disapproved, escape→escaped, file→filed, fade→faded, face→faced, excite→excited
+            </p>
+            
+            <h3 style="color: #6f42c1;">🟣 REGLA 3: Consonante + y (-y+ied) - 3 verbos</h3>
+            <p style="line-height: 2; font-size: 0.95rem;">
+                dry→dried, fancy→fancied, empty→emptied
+            </p>
+            
+            <h3 style="color: #fd7e14;">🟠 REGLA 4: CVC (Duplicar) - 8 verbos</h3>
+            <p style="line-height: 2; font-size: 0.95rem;">
+                fit→fitted, drag→dragged, fill→filled, dress→dressed, drop→dropped, drip→dripped, flap→flapped, fix→fixed
+            </p>
+        </div>
+        <button class="btn-success" onclick="showLevels()">IR A JUGAR</button>
+    </div>
+
+    <!-- LEVELS SCREEN -->
+    <div id="levelsScreen" class="screen">
+        <h2>🎯 Selecciona Nivel</h2>
+        <div class="levels">
+            <div class="level-btn" id="lvl1" onclick="startLevel(1)">
+                <div class="level-number">1</div>
+                <div>
+                    <div style="font-weight: bold;">Regla General</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">32 verbos (+ed)</div>
+                </div>
+            </div>
+            
+            <div class="level-btn locked" id="lvl2" onclick="if(!this.classList.contains('locked')) startLevel(2)">
+                <div class="level-number">2</div>
+                <div>
+                    <div style="font-weight: bold;">Terminan en -e</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">16 verbos (+d)</div>
+                </div>
+            </div>
+            
+            <div class="level-btn locked" id="lvl3" onclick="if(!this.classList.contains('locked')) startLevel(3)">
+                <div class="level-number">3</div>
+                <div>
+                    <div style="font-weight: bold;">Consonante + y</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">3 verbos (-y+ied)</div>
+                </div>
+            </div>
+            
+            <div class="level-btn locked" id="lvl4" onclick="if(!this.classList.contains('locked')) startLevel(4)">
+                <div class="level-number">4</div>
+                <div>
+                    <div style="font-weight: bold;">CVC (Duplicar)</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">8 verbos (CVC)</div>
+                </div>
+            </div>
+            
+            <div class="level-btn locked" id="lvl5" onclick="if(!this.classList.contains('locked')) startLevel(5)">
+                <div class="level-number">5</div>
+                <div>
+                    <div style="font-weight: bold;">⚡ DESAFÍO FINAL</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">Todos los 59 verbos mezclados</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen" class="screen">
+        <div class="stats">
+            <div class="stat-item">❤️ <span id="lives">3</span></div>
+            <div class="stat-item">⭐ <span id="score">0</span></div>
+            <div class="stat-item">📊 <span id="progress">1/10</span></div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="card" id="gameCard">
+            <!-- Content loaded by JS -->
+        </div>
+        
+        <button class="btn-danger" onclick="quitGame()">SALIR</button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="resultScreen" class="screen">
+        <h1 id="resultTitle">¡COMPLETADO!</h1>
+        <div style="font-size: 5rem; margin: 20px;" id="resultIcon">🏆</div>
+        <div class="card" style="max-width: 400px;">
+            <div style="font-size: 2rem; color: #764ba2; font-weight: bold; margin-bottom: 10px;">Puntuación: <span id="finalScore">0</span></div>
+            <div style="font-size: 2rem; margin: 15px 0;" id="finalStars">⭐⭐⭐</div>
+            <p id="resultMessage" style="color: #666;">¡Bien hecho!</p>
+        </div>
+        <button class="btn-success" onclick="continueGame()">CONTINUAR</button>
+        <button class="btn-info" onclick="retryLevel()">REPETIR</button>
+    </div>
+
+    <script>
+        // LOS 59 VERBOS EXACTOS DEL USUARIO
+        const verbs = {
+            1: [ // General +ed (32 verbos)
+                {b:"end", p:"ended"}, {b:"fail", p:"failed"}, {b:"discover", p:"discovered"},
+                {b:"entertain", p:"entertained"}, {b:"enter", p:"entered"}, {b:"drain", p:"drained"},
+                {b:"develop", p:"developed"}, {b:"expect", p:"expected"}, {b:"encourage", p:"encouraged"},
+                {b:"extend", p:"extended"}, {b:"fetch", p:"fetched"}, {b:"fasten", p:"fastened"},
+                {b:"explain", p:"explained"}, {b:"flash", p:"flashed"}, {b:"disappear", p:"disappeared"},
+                {b:"exist", p:"existed"}, {b:"expand", p:"expanded"}, {b:"fear", p:"feared"},
+                {b:"desert", p:"deserted"}, {b:"depend", p:"depended"}, {b:"disagree", p:"disagreed"},
+                {b:"float", p:"floated"}, {b:"earn", p:"earned"}, {b:"dust", p:"dusted"},
+                {b:"destroy", p:"destroyed"}, {b:"dream", p:"dreamed"}, {b:"employ", p:"employed"},
+                {b:"embarrass", p:"embarrassed"}, {b:"drown", p:"drowned"}, {b:"doubt", p:"doubted"},
+                {b:"detect", p:"detected"}, {b:"enjoy", p:"enjoyed"}
+            ],
+            2: [ // Ends in e +d (16 verbos)
+                {b:"fire", p:"fired"}, {b:"exercise", p:"exercised"}, {b:"divide", p:"divided"},
+                {b:"examine", p:"examined"}, {b:"educate", p:"educated"}, {b:"dislike", p:"disliked"},
+                {b:"deserve", p:"deserved"}, {b:"excuse", p:"excused"}, {b:"explode", p:"exploded"},
+                {b:"describe", p:"described"}, {b:"disapprove", p:"disapproved"}, {b:"escape", p:"escaped"},
+                {b:"file", p:"filed"}, {b:"fade", p:"faded"}, {b:"face", p:"faced"}, {b:"excite", p:"excited"}
+            ],
+            3: [ // Consonant + y (3 verbos)
+                {b:"dry", p:"dried"}, {b:"fancy", p:"fancied"}, {b:"empty", p:"emptied"}
+            ],
+            4: [ // CVC double (8 verbos)
+                {b:"fit", p:"fitted"}, {b:"drag", p:"dragged"}, {b:"fill", p:"filled"},
+                {b:"dress", p:"dressed"}, {b:"drop", p:"dropped"}, {b:"drip", p:"dripped"},
+                {b:"flap", p:"flapped"}, {b:"fix", p:"fixed"}
+            ]
+        };
+
+        const rules = {
+            1: "Regla General: Agregar -ed",
+            2: "Terminan en -e: Agregar solo -d",
+            3: "Consonante + y: Cambiar y→i y agregar -ed",
+            4: "CVC: Duplicar la última consonante",
+            5: "MIX: Identifica la regla"
+        };
+
+        let currentLevel = 1;
+        let currentVerbs = [];
+        let currentIndex = 0;
+        let score = 0;
+        let lives = 3;
+        let unlocked = 1;
+        let levelCompleted = {1:false, 2:false, 3:false, 4:false, 5:false};
+
+        function showLevels() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('levelsScreen').classList.add('active');
+            updateLevelButtons();
+        }
+
+        function showVerbList() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('listScreen').classList.add('active');
+        }
+
+        function updateLevelButtons() {
+            for(let i=1; i<=5; i++) {
+                const btn = document.getElementById(`lvl${i}`);
+                if(i <= unlocked) {
+                    btn.classList.remove('locked');
+                    if(levelCompleted[i]) btn.classList.add('completed');
+                } else {
+                    btn.classList.add('locked');
+                }
+            }
+        }
+
+        function startLevel(level) {
+            currentLevel = level;
+            currentIndex = 0;
+            score = 0;
+            lives = 3;
+            
+            if(level === 5) {
+                // Mix all
+                currentVerbs = [];
+                [1,2,3,4].forEach(l => currentVerbs = currentVerbs.concat(verbs[l]));
+                currentVerbs.sort(() => Math.random() - 0.5);
+                currentVerbs = currentVerbs.slice(0, 15); // 15 random for final level
+            } else {
+                currentVerbs = [...verbs[level]].sort(() => Math.random() - 0.5);
+            }
+            
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('gameScreen').classList.add('active');
+            updateStats();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const v = currentVerbs[currentIndex];
+            const progress = ((currentIndex / currentVerbs.length) * 100);
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progress').textContent = `${currentIndex + 1}/${currentVerbs.length}`;
+            
+            // Generate options
+            let options = [v.p];
+            
+            // Add wrong options based on wrong rules
+            if(currentLevel === 1 || (currentLevel === 5 && !v.p.match(/(ied|[^aeiou]ed)$/))) {
+                options.push(v.b + 'd');
+            } else if(currentLevel === 2 || v.p.endsWith('d')) {
+                options.push(v.b + 'ed');
+            } else if(currentLevel === 3 || v.p.endsWith('ied')) {
+                options.push(v.b + 'ed');
+                options.push(v.b.substring(0, v.b.length-1) + 'ed');
+            } else if(currentLevel === 4 || v.p.match(/(.)\1ed$/)) {
+                options.push(v.b + 'ed'); // No double
+            }
+            
+            // Ensure uniqueness and limit to 4 options
+            options = [...new Set(options)];
+            while(options.length < 4) {
+                const randomVerb = currentVerbs[Math.floor(Math.random() * currentVerbs.length)];
+                if(!options.includes(randomVerb.p)) options.push(randomVerb.p);
+            }
+            options.sort(() => Math.random() - 0.5);
+            
+            const html = `
+                <div class="rule-tag">${rules[currentLevel]}</div>
+                <div style="color: #666; margin-bottom: 10px;">¿Cuál es el pasado de?</div>
+                <div class="verb-display">${v.b}</div>
+                <div class="options">
+                    ${options.map(opt => `<button class="option" onclick="checkAnswer('${opt}', '${v.p}', this)">${opt}</button>`).join('')}
+                </div>
+                <div style="margin-top: 20px; color: #999;">O escribe la respuesta:</div>
+                <input type="text" id="textAns" placeholder="Escribe aquí..." onkeypress="if(event.key==='Enter') checkText('${v.p}')">
+                <button class="btn-success" onclick="checkText('${v.p}')" style="width: 100%; margin-top: 10px;">ENVIAR</button>
+            `;
+            
+            document.getElementById('gameCard').innerHTML = html;
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            document.querySelectorAll('.option').forEach(b => {
+                b.style.pointerEvents = 'none';
+                if(b.textContent === correct) b.classList.add('correct');
+            });
+            
+            if(selected === correct) {
+                score += 100;
+                btn.classList.add('correct');
+                nextQuestion();
+            } else {
+                btn.classList.add('wrong');
+                lives--;
+                updateStats();
+                if(lives <= 0) gameOver();
+                else nextQuestion();
+            }
+        }
+
+        function checkText(correct) {
+            const input = document.getElementById('textAns');
+            const val = input.value.trim().toLowerCase();
+            if(!val) return;
+            
+            if(val === correct.toLowerCase()) {
+                input.classList.add('correct');
+                score += 100;
+                nextQuestion();
+            } else {
+                input.classList.add('wrong');
+                document.querySelectorAll('.option').forEach(b => {
+                    if(b.textContent === correct) b.classList.add('correct');
+                });
+                lives--;
+                updateStats();
+                if(lives <= 0) setTimeout(gameOver, 1000);
+                else nextQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            setTimeout(() => {
+                currentIndex++;
+                if(currentIndex < currentVerbs.length) {
+                    showQuestion();
+                } else {
+                    levelComplete();
+                }
+            }, 1500);
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('lives').textContent = lives;
+        }
+
+        function levelComplete() {
+            levelCompleted[currentLevel] = true;
+            if(currentLevel < 5 && currentLevel >= unlocked) unlocked = currentLevel + 1;
+            
+            const maxScore = currentVerbs.length * 100;
+            const percent = score / maxScore;
+            let stars = 1;
+            if(percent >= 0.7) stars = 3;
+            else if(percent >= 0.4) stars = 2;
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalStars').textContent = '⭐'.repeat(stars);
+            
+            const msgs = {
+                1: "¡Dominaste los 32 verbos generales!",
+                2: "¡Perfecto con los verbos en -e!",
+                3: "¡Los 3 verbos en Y son tuyos!",
+                4: "¡Duplicaste consonantes como un pro!",
+                5: "¡ERES EL MAESTRO DE LOS 59 VERBOS!"
+            };
+            document.getElementById('resultMessage').textContent = msgs[currentLevel] || "¡Excelente!";
+            
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('resultScreen').classList.add('active');
+        }
+
+        function gameOver() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('resultScreen').classList.add('active');
+            document.getElementById('resultTitle').textContent = "GAME OVER";
+            document.getElementById('resultIcon').textContent = "😢";
+            document.getElementById('finalStars').textContent = "💔";
+            document.getElementById('resultMessage').textContent = "¡No te rindas! Inténtalo de nuevo.";
+        }
+
+        function continueGame() {
+            showLevels();
+        }
+
+        function retryLevel() {
+            startLevel(currentLevel);
+        }
+
+        function quitGame() {
+            if(confirm("¿Salir del nivel? Perderás tu progreso.")) {
+                showLevels();
+            }
+        }
+    </script>
+</body>
+</html>

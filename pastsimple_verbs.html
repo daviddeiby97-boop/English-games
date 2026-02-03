@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Perfect Day - Regular Verbs (Randomized)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Patrick+Hand&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #FFE4B5 50%, #F4A460 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .screen {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #FF6B6B;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .game-box {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        
+        .verb-bank {
+            background: #E3F2FD;
+            border: 3px dashed #2196F3;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .verb-bank h3 {
+            color: #1976D2;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .shuffle-icon {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            animation: shake 2s infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+        
+        .verbs-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            min-height: 100px;
+        }
+        
+        .verb-tag {
+            background: white;
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: 2px solid #2196F3;
+            color: #1976D2;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .verb-tag:hover {
+            background: #2196F3;
+            color: white;
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 5px 15px rgba(33,150,243,0.3);
+        }
+        
+        .verb-tag.used {
+            background: #BBDEFB;
+            color: #90CAF9;
+            border-color: #BBDEFB;
+            text-decoration: line-through;
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .story-container {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.4rem;
+            line-height: 2.2;
+            color: #2c3e50;
+            background: #FFFEF7;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #FFD93D;
+        }
+        
+        .blank {
+            display: inline-block;
+            width: 125px;
+            border-bottom: 3px solid #FF6B6B;
+            margin: 0 4px;
+            text-align: center;
+            position: relative;
+            vertical-align: middle;
+            background: rgba(255,255,255,0.5);
+            border-radius: 5px;
+        }
+        
+        .blank input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.3rem;
+            text-align: center;
+            padding: 5px;
+            color: #d63031;
+            outline: none;
+        }
+        
+        .blank input::placeholder {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        
+        .blank.correct {
+            border-bottom-color: #00b894;
+            background: #e8f8f5;
+        }
+        
+        .blank.correct input {
+            color: #00b894;
+        }
+        
+        .blank.wrong {
+            background: #ffe0b2;
+            border-bottom-color: #ff7043;
+        }
+        
+        .blank.wrong input {
+            color: #d84315;
+        }
+        
+        .number {
+            position: absolute;
+            top: -12px;
+            left: -8px;
+            background: #FF6B6B;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            font-family: 'Fredoka', sans-serif;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0 10px;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .btn-check {
+            background: #00b894;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,184,148,0.3);
+        }
+        
+        .btn-check:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,184,148,0.4);
+        }
+        
+        .btn-clear {
+            background: #ff7675;
+            color: white;
+        }
+        
+        .btn-start {
+            background: #FF6B6B;
+            color: white;
+            font-size: 1.3rem;
+            padding: 20px 50px;
+            box-shadow: 0 5px 20px rgba(255,107,107,0.3);
+        }
+        
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .result-modal.active {
+            display: flex;
+        }
+        
+        .result-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: popUp 0.4s;
+        }
+        
+        @keyframes popUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .score-big {
+            font-size: 3.5rem;
+            color: #00b894;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .wrong-list {
+            text-align: left;
+            margin: 20px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .wrong-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            color: #e17055;
+        }
+        
+        .correct-ans {
+            color: #00b894;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            .story-container { font-size: 1.15rem; padding: 20px; }
+            .blank { width: 100px; }
+            h1 { font-size: 1.7rem; }
+            .verb-tag { font-size: 0.95rem; padding: 8px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- START SCREEN -->
+    <div id="startScreen" class="screen active">
+        <div style="text-align: center; padding: 50px 20px;">
+            <div style="font-size: 5rem; margin-bottom: 20px;">🏖️📝🎲</div>
+            <h1 style="font-size: 2.3rem; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin-bottom: 15px;">
+                A Perfect Day at the Beach
+            </h1>
+            <p style="font-size: 1.2rem; color: white; margin-bottom: 15px;">
+                Conjuga los verbos regulares en Past Simple
+            </p>
+            <p style="font-size: 1rem; color: rgba(255,255,255,0.9); margin-bottom: 30px;">
+                (El banco de verbos aparecerá en orden aleatorio)
+            </p>
+            <button class="btn-start" onclick="startGame()">EMPEZAR</button>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen" class="screen">
+        <div class="header">
+            <h1>🏖️ Completa la Historia</h1>
+            <p style="color: #666; font-size: 0.95rem;">Usa la forma correcta del Past Simple (-ed)</p>
+        </div>
+
+        <div class="game-box">
+            <!-- Word Bank - Se mezcla automáticamente -->
+            <div class="verb-bank">
+                <span class="shuffle-icon">🔀</span>
+                <h3>📝 Banco de Verbos (desordenado)</h3>
+                <div class="verbs-pool" id="verbPool">
+                    <!-- Se llena con JavaScript en orden aleatorio -->
+                </div>
+                <p style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem; font-style: italic;">
+                    💡 Haz clic en un verbo para copiarlo (en infinitivo), luego conjúgalo tú
+                </p>
+            </div>
+
+            <!-- Story -->
+            <div class="story-container" id="storyText">
+                Yesterday morning I <span class="blank"><span class="number">1</span><input type="text" id="ans1" placeholder="..."></span> early because it <span class="blank"><span class="number">2</span><input type="text" id="ans2" placeholder="..."></span> sunny and beautiful.<br><br>
+                
+                My family and I <span class="blank"><span class="number">3</span><input type="text" id="ans3" placeholder="..."></span> breakfast quickly: eggs, bread and orange juice.<br><br>
+                
+                After that, we <span class="blank"><span class="number">4</span><input type="text" id="ans4" placeholder="..."></span> to the beach in my dad's car.<br><br>
+                
+                We <span class="blank"><span class="number">5</span><input type="text" id="ans5" placeholder="..."></span> our towels, umbrella and a big ball with us.<br><br>
+                
+                When we arrived, I <span class="blank"><span class="number">6</span><input type="text" id="ans6" placeholder="..."></span> many seagulls flying in the sky.<br><br>
+                
+                My little brother <span class="blank"><span class="number">7</span><input type="text" id="ans7" placeholder="..."></span> to the water and <span class="blank"><span class="number">8</span><input type="text" id="ans8" placeholder="..."></span> the cold waves.<br><br>
+                
+                My sister and I <span class="blank"><span class="number">9</span><input type="text" id="ans9" placeholder="..."></span> in the sand near the sea.<br><br>
+                
+                We <span class="blank"><span class="number">10</span><input type="text" id="ans10" placeholder="..."></span> a big sandcastle with towers!<br><br>
+                
+                Later, we <span class="blank"><span class="number">11</span><input type="text" id="ans11" placeholder="..."></span> not to swim because it <span class="blank"><span class="number">12</span><input type="text" id="ans12" placeholder="..."></span> very cold.<br><br>
+                
+                In the afternoon my mum <span class="blank"><span class="number">13</span><input type="text" id="ans13" placeholder="..."></span> ice cream for everyone.<br><br>
+                
+                We <span class="blank"><span class="number">14</span><input type="text" id="ans14" placeholder="..."></span> our day at 6 o'clock and <span class="blank"><span class="number">15</span><input type="text" id="ans15" placeholder="..."></span> home.<br><br>
+                
+                I really <span class="blank"><span class="number">16</span><input type="text" id="ans16" placeholder="..."></span> to stay longer. It was the best day!
+            </div>
+
+            <div class="controls">
+                <button class="btn-check" onclick="checkAnswers()">✅ VERIFICAR RESPUESTAS</button>
+                <button class="btn-clear" onclick="clearAll()">🔄 BORRAR TODO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULT MODAL -->
+    <div id="resultModal" class="result-modal">
+        <div class="result-content">
+            <div style="font-size: 4rem; margin-bottom: 10px;">🏆</div>
+            <h2 style="color: #FF6B6B; margin-bottom: 10px;">¡HISTORIA COMPLETADA!</h2>
+            
+            <div class="score-big" id="scoreDisplay">0/16</div>
+            
+            <p id="feedbackMsg" style="font-size: 1.1rem; color: #666; margin-bottom: 20px;"></p>
+            
+            <div class="wrong-list" id="wrongList" style="display: none;">
+                <h4 style="margin-bottom: 10px; color: #333;">Errores:</h4>
+                <div id="wrongItems"></div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn-start" onclick="closeModal()">JUGAR OTRA VEZ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lista de verbos regulares (infinitivo)
+        const verbBank = [
+            { inf: "start", past: "started" },
+            { inf: "look", past: "looked" },
+            { inf: "cook", past: "cooked" },
+            { inf: "travel", past: "traveled" },
+            { inf: "carry", past: "carried" },
+            { inf: "watch", past: "watched" },
+            { inf: "walk", past: "walked" },
+            { inf: "enjoy", past: "enjoyed" },
+            { inf: "play", past: "played" },
+            { inf: "create", past: "created" },
+            { inf: "decide", past: "decided" },
+            { inf: "seem", past: "seemed" },
+            { inf: "purchase", past: "purchased" },
+            { inf: "finish", past: "finished" },
+            { inf: "want", past: "wanted" },
+            { inf: "return", past: "returned" }
+        ];
+
+        // Respuestas correctas por número de espacio
+        const correctAnswers = {
+            1: ["started"],
+            2: ["looked", "seemed"],
+            3: ["cooked"],
+            4: ["traveled", "travelled"],
+            5: ["carried"],
+            6: ["watched"],
+            7: ["walked"],
+            8: ["enjoyed"],
+            9: ["played"],
+            10: ["created"],
+            11: ["decided"],
+            12: ["seemed", "looked"],
+            13: ["purchased"],
+            14: ["finished"],
+            15: ["returned", "walked"],
+            16: ["wanted", "decided"]
+        };
+
+        // Mezclar array (Fisher-Yates shuffle)
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function renderVerbBank() {
+            const container = document.getElementById('verbPool');
+            container.innerHTML = '';
+            
+            // Mezclar copia del array
+            const shuffled = shuffle([...verbBank]);
+            
+            shuffled.forEach(verb => {
+                const span = document.createElement('span');
+                span.className = 'verb-tag';
+                span.textContent = verb.inf; // Mostrar infinitivo
+                span.onclick = () => copyToClipboard(verb.inf);
+                container.appendChild(span);
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Feedback visual temporal
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = "¡copiado!";
+                btn.style.background = "#4CAF50";
+                btn.style.color = "white";
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = "";
+                    btn.style.color = "";
+                }, 800);
+            }).catch(err => {
+                console.log('Error al copiar:', err);
+            });
+        }
+
+        function startGame() {
+            renderVerbBank(); // Mezclar cada vez que empieza
+            document.getElementById('startScreen').classList.remove('active');
+            document.getElementById('gameScreen').classList.add('active');
+        }
+
+        function clearAll() {
+            for(let i=1; i<=16; i++) {
+                const input = document.getElementById(`ans${i}`);
+                input.value = '';
+                input.parentElement.classList.remove('correct', 'wrong');
+            }
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            let wrongs = [];
+
+            for(let i=1; i<=16; i++) {
+                const input = document.getElementById(`ans${i}`);
+                const userVal = input.value.trim().toLowerCase();
+                const parent = input.parentElement;
+                
+                parent.classList.remove('correct', 'wrong');
+                
+                const validAnswers = correctAnswers[i].map(a => a.toLowerCase());
+                
+                if(validAnswers.includes(userVal)) {
+                    correct++;
+                    parent.classList.add('correct');
+                } else {
+                    parent.classList.add('wrong');
+                    wrongs.push({
+                        num: i,
+                        user: userVal || '(vacío)',
+                        correct: correctAnswers[i][0]
+                    });
+                }
+            }
+
+            // Mostrar resultado
+            const percentage = Math.round((correct/16)*100);
+            document.getElementById('scoreDisplay').textContent = `${correct}/16`;
+            
+            let msg = "";
+            if(percentage === 100) msg = "🌟 ¡PERFECTO! Dominas los verbos regulares";
+            else if(percentage >= 75) msg = "👏 ¡Muy bien! Casi perfecto";
+            else if(percentage >= 50) msg = "👍 Bien, pero revisa la ortografía (-ed)";
+            else msg = "📚 Necesitas practicar más. Recuerda: regular = +ed";
+            
+            document.getElementById('feedbackMsg').textContent = msg;
+            
+            const wrongListDiv = document.getElementById('wrongList');
+            const wrongItemsDiv = document.getElementById('wrongItems');
+            
+            if(wrongs.length > 0) {
+                wrongListDiv.style.display = 'block';
+                wrongItemsDiv.innerHTML = wrongs.map(w => 
+                    `<div class="wrong-item">
+                        <strong>#${w.num}</strong>: "${w.user}" → 
+                        <span class="correct-ans">${w.correct}</span>
+                     </div>`
+                ).join('');
+            } else {
+                wrongListDiv.style.display = 'none';
+            }
+            
+            document.getElementById('resultModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').classList.remove('active');
+            // Volver a mezclar para nueva partida
+            renderVerbBank();
+            clearAll();
+        }
+
+        // Navegación con Enter entre inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach((input, index) => {
+                input.addEventListener('keypress', function(e) {
+                    if(e.key === 'Enter') {
+                        if(index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        } else {
+                            checkAnswers();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentence Master - Past Simple Negative</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Nunito:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --secondary: #dc2626;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #fbbf24;
+            --dark: #1e1b4b;
+            --light: #faf5ff;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #dc2626 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 900px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+            border: 2px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #5b21b6;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.5);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, var(--dark), #312e81);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            color: #faf5ff;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .game-area {
+            background: #faf5ff;
+            border-radius: 20px;
+            padding: 2rem;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #ddd6fe;
+        }
+
+        .negative-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #fecaca;
+        }
+
+        .instruction {
+            text-align: center;
+            color: #4c1d95;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .grammar-tip {
+            background: #f3e8ff;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            color: #5b21b6;
+            line-height: 1.6;
+        }
+
+        .words-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            min-height: 60px;
+            padding: 1rem;
+            background: white;
+            border-radius: 15px;
+            border: 2px dashed #c4b5fd;
+            transition: all 0.3s ease;
+        }
+
+        .words-container.drag-over {
+            background: #f5f3ff;
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .word {
+            background: linear-gradient(135deg, #ffffff, #faf5ff);
+            border: 2px solid #ddd6fe;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            cursor: move;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1e1b4b;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .word::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .word:hover {
+            transform: translateY(-2px) rotate(2deg);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+        }
+
+        .word:hover::before {
+            left: 100%;
+        }
+
+        .word.dragging {
+            opacity: 0.5;
+            transform: scale(1.1);
+            cursor: grabbing;
+        }
+
+        .word.placed {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            border-color: transparent;
+            animation: placeWord 0.5s ease;
+        }
+
+        @keyframes placeWord {
+            0% { transform: scale(1.2); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .answer-area {
+            background: white;
+            border: 3px solid #c4b5fd;
+            border-radius: 15px;
+            padding: 2rem;
+            min-height: 100px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .answer-area.correct {
+            border-color: var(--success);
+            background: #f0fdf4;
+            animation: correctPulse 0.6s ease;
+        }
+
+        .answer-area.wrong {
+            border-color: var(--error);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .drop-zone-placeholder {
+            color: #7c3aed;
+            font-style: italic;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            font-family: 'Nunito', sans-serif;
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.5);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #ddd6fe;
+        }
+
+        .btn-secondary:hover {
+            background: #faf5ff;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f3e8ff;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .hint-box {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            border-radius: 0 10px 10px 0;
+            margin-top: 1rem;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .hint-box.show {
+            display: block;
+        }
+
+        .timer {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+
+        .timer.warning {
+            color: #ef4444;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2rem; }
+            .game-container { padding: 1.5rem; }
+            .word { padding: 0.5rem 1rem; font-size: 1rem; }
+            .stats-bar { flex-direction: column; gap: 1rem; }
+        }
+
+        .floating-icon {
+            position: absolute;
+            opacity: 0.1;
+            font-size: 4rem;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="floating-icon" style="top: 10%; left: 10%;">⏮️</div>
+        <div class="floating-icon" style="bottom: 10%; right: 10%; animation-delay: -2s;">🚫</div>
+        
+        <header class="header">
+            <h1>🚫 Past Negative</h1>
+            <p class="subtitle">Ordena las oraciones negativas en pasado</p>
+            <span class="mode-badge">Modo: Past Simple Negativo</span>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-value" id="level">1</span>
+                <span class="stat-label">Nivel</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="score">0</span>
+                <span class="stat-label">Puntos</span>
+            </div>
+            <div class="timer" id="timer">00:00</div>
+        </div>
+
+        <div class="game-area">
+            <span class="negative-badge">🚫 Oración Negativa Pasada</span>
+            
+            <div class="grammar-tip">
+                <strong>Estructura:</strong> Sujeto + <strong>didn't</strong> + verbo en infinitivo (sin TO)<br>
+                <strong>Ejemplo:</strong> He didn't play → Él no jugó | They didn't study → Ellos no estudiaron
+            </div>
+
+            <p class="instruction" id="instruction">
+                Arrastra las palabras para formar la oración negativa en pasado correcta
+            </p>
+
+            <div class="answer-area" id="answer-area">
+                <span class="drop-zone-placeholder">Arrastra las palabras aquí...</span>
+            </div>
+
+            <div class="words-container" id="words-container">
+                <!-- Las palabras se generarán aquí -->
+            </div>
+
+            <div class="hint-box" id="hint-box">
+                💡 <strong>Traducción:</strong> <span id="hint-text"></span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-secondary" onclick="game.showHint()">
+                💡 Pista (-5 pts)
+            </button>
+            <button class="btn-secondary" onclick="game.resetLevel()">
+                🔄 Reintentar
+            </button>
+            <button class="btn-success" onclick="game.checkAnswer()">
+                ✓ Verificar
+            </button>
+            <button class="btn-primary" onclick="game.nextLevel()" id="next-btn" style="display: none;">
+                Siguiente ➜
+            </button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        class PastNegativeGame {
+            constructor() {
+                this.levels = [
+                    {
+                        words: ['I', "didn't", 'work', 'yesterday'],
+                        hint: 'Yo no trabajé ayer',
+                        rule: 'did + not (didn\'t) + work'
+                    },
+                    {
+                        words: ['She', "didn't", 'play', 'tennis', 'last', 'Saturday'],
+                        hint: 'Ella no jugó al tenis el sábado pasado',
+                        rule: 'She + didn\'t + play'
+                    },
+                    {
+                        words: ['They', "didn't", 'study', 'for', 'the', 'exam'],
+                        hint: 'Ellos no estudiaron para el examen',
+                        rule: 'They + didn\'t + study'
+                    },
+                    {
+                        words: ['He', "didn't", 'watch', 'the', 'movie', 'last', 'night'],
+                        hint: 'Él no vio la película anoche',
+                        rule: 'He + didn\'t + watch'
+                    },
+                    {
+                        words: ['We', "didn't", 'walk', 'to', 'the', 'park'],
+                        hint: 'Nosotros no caminamos al parque',
+                        rule: 'We + didn\'t + walk'
+                    },
+                    {
+                        words: ['My', 'mother', "didn't", 'cook', 'dinner', 'yesterday'],
+                        hint: 'Mi madre no cocinó la cena ayer',
+                        rule: 'She + didn\'t + cook'
+                    },
+                    {
+                        words: ['The', 'children', "didn't", 'listen', 'to', 'the', 'teacher'],
+                        hint: 'Los niños no escucharon al profesor',
+                        rule: 'They + didn\'t + listen'
+                    },
+                    {
+                        words: ['She', "didn't", 'wash', 'her', 'car', 'last', 'week'],
+                        hint: 'Ella no lavó su coche la semana pasada',
+                        rule: 'She + didn\'t + wash'
+                    },
+                    {
+                        words: ['He', "didn't", 'clean', 'his', 'room'],
+                        hint: 'Él no limpió su cuarto',
+                        rule: 'He + didn\'t + clean'
+                    },
+                    {
+                        words: ['We', "didn't", 'dance', 'at', 'the', 'party'],
+                        hint: 'Nosotros no bailamos en la fiesta',
+                        rule: 'We + didn\'t + dance'
+                    },
+                    {
+                        words: ['The', 'train', "didn't", 'arrive', 'on', 'time'],
+                        hint: 'El tren no llegó a tiempo',
+                        rule: 'It + didn\'t + arrive'
+                    },
+                    {
+                        words: ['They', "didn't", 'live', 'in', 'Paris', 'long'],
+                        hint: 'Ellos no vivieron en París mucho tiempo',
+                        rule: 'They + didn\'t + live'
+                    },
+                    {
+                        words: ['I', "didn't", 'like', 'that', 'movie', 'at', 'all'],
+                        hint: 'No me gustó esa película para nada',
+                        rule: 'I + didn\'t + like'
+                    },
+                    {
+                        words: ['The', 'game', "didn't", 'start', 'at', 'three'],
+                        hint: 'El juego no empezó a las tres',
+                        rule: 'It + didn\'t + start'
+                    },
+                    {
+                        words: ['He', "didn't", 'finish', 'his', 'homework'],
+                        hint: 'Él no terminó su tarea',
+                        rule: 'He + didn\'t + finish'
+                    },
+                    {
+                        words: ['She', "didn't", 'ask', 'any', 'questions'],
+                        hint: 'Ella no hizo ninguna pregunta',
+                        rule: 'She + didn\'t + ask'
+                    },
+                    {
+                        words: ['My', 'friend', "didn't", 'call', 'me', 'yesterday'],
+                        hint: 'Mi amigo no me llamó ayer',
+                        rule: 'He/She + didn\'t + call'
+                    },
+                    {
+                        words: ['The', 'cat', "didn't", 'jump', 'over', 'the', 'fence'],
+                        hint: 'El gato no saltó por encima de la cerca',
+                        rule: 'It + didn\'t + jump'
+                    },
+                    {
+                        words: ['It', "didn't", 'rain', 'yesterday'],
+                        hint: 'No llovió ayer',
+                        rule: 'It + didn\'t + rain'
+                    },
+                    {
+                        words: ['We', "didn't", 'enjoy', 'the', 'concert', 'much'],
+                        hint: 'No disfrutamos mucho el concierto',
+                        rule: 'We + didn\'t + enjoy'
+                    },
+                    {
+                        words: ['He', "didn't", 'visit', 'his', 'grandparents', 'last', 'weekend'],
+                        hint: 'Él no visitó a sus abuelos el fin de semana pasado',
+                        rule: 'He + didn\'t + visit'
+                    },
+                    {
+                        words: ['They', "didn't", 'arrive', 'until', 'midnight'],
+                        hint: 'Ellos no llegaron hasta medianoche',
+                        rule: 'They + didn\'t + arrive'
+                    },
+                    {
+                        words: ['I', "didn't", 'buy', 'anything', 'at', 'the', 'store'],
+                        hint: 'No compré nada en la tienda',
+                        rule: 'I + didn\'t + buy'
+                    },
+                    {
+                        words: ['She', "didn't", 'answer', 'the', 'phone'],
+                        hint: 'Ella no contestó el teléfono',
+                        rule: 'She + didn\'t + answer'
+                    },
+                    {
+                        words: ['We', "didn't", 'see', 'anybody', 'there'],
+                        hint: 'No vimos a nadie allí',
+                        rule: 'We + didn\'t + see'
+                    },
+                    {
+                        words: ['He', "didn't", 'go', 'to', 'school', 'yesterday'],
+                        hint: 'Él no fue a la escuela ayer',
+                        rule: 'He + didn\'t + go'
+                    },
+                    {
+                        words: ['The', 'dog', "didn't", 'bark', 'at', 'the', 'stranger'],
+                        hint: 'El perro no ladró al extraño',
+                        rule: 'It + didn\'t + bark'
+                    },
+                    {
+                        words: ['I', "didn't", 'have', 'time', 'to', 'eat', 'breakfast'],
+                        hint: 'No tuve tiempo de desayunar',
+                        rule: 'I + didn\'t + have'
+                    },
+                    {
+                        words: ['They', "didn't", 'find', 'the', 'missing', 'keys'],
+                        hint: 'Ellos no encontraron las llaves perdidas',
+                        rule: 'They + didn\'t + find'
+                    },
+                    {
+                        words: ['She', "didn't", 'tell', 'me', 'the', 'truth'],
+                        hint: 'Ella no me dijo la verdad',
+                        rule: 'She + didn\'t + tell'
+                    }
+                ];
+                
+                this.currentLevel = 0;
+                this.score = 0;
+                this.timeElapsed = 0;
+                this.timerInterval = null;
+                this.userAnswer = [];
+                this.draggedElement = null;
+                
+                this.init();
+            }
+
+            init() {
+                this.startTimer();
+                this.loadLevel();
+                this.setupDragAndDrop();
+            }
+
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    this.timeElapsed++;
+                    const mins = Math.floor(this.timeElapsed / 60).toString().padStart(2, '0');
+                    const secs = (this.timeElapsed % 60).toString().padStart(2, '0');
+                    document.getElementById('timer').textContent = `${mins}:${secs}`;
+                    
+                    if (this.timeElapsed > 45) {
+                        document.getElementById('timer').classList.add('warning');
+                    }
+                }, 1000);
+            }
+
+            loadLevel() {
+                const level = this.levels[this.currentLevel];
+                const container = document.getElementById('words-container');
+                const answerArea = document.getElementById('answer-area');
+                
+                // Reset
+                container.innerHTML = '';
+                answerArea.innerHTML = '<span class="drop-zone-placeholder">Arrastra las palabras aquí...</span>';
+                answerArea.className = 'answer-area';
+                this.userAnswer = [];
+                
+                // Update UI
+                document.getElementById('level').textContent = this.currentLevel + 1;
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('next-btn').style.display = 'none';
+                document.getElementById('hint-box').classList.remove('show');
+                
+                // Shuffle words
+                const shuffled = [...level.words].sort(() => Math.random() - 0.5);
+                
+                // Create word elements
+                shuffled.forEach((word, index) => {
+                    const wordEl = document.createElement('div');
+                    wordEl.className = 'word';
+                    wordEl.draggable = true;
+                    wordEl.textContent = word;
+                    wordEl.dataset.word = word;
+                    wordEl.dataset.index = index;
+                    
+                    // Highlight didn't
+                    if (word.toLowerCase() === "didn't") {
+                        wordEl.style.background = 'linear-gradient(135deg, #fee2e2, #fecaca)';
+                        wordEl.style.borderColor = '#dc2626';
+                        wordEl.style.color = '#991b1b';
+                        wordEl.style.fontWeight = '800';
+                    }
+                    
+                    // Highlight time expressions
+                    const timeWords = ['yesterday', 'last', 'night', 'Saturday', 'week', 'weekend', 'ago'];
+                    if (timeWords.some(t => word.toLowerCase().includes(t))) {
+                        wordEl.style.borderBottom = '3px solid #7c3aed';
+                    }
+                    
+                    // Touch events for mobile
+                    wordEl.addEventListener('touchstart', this.handleTouchStart.bind(this), {passive: false});
+                    wordEl.addEventListener('touchmove', this.handleTouchMove.bind(this), {passive: false});
+                    wordEl.addEventListener('touchend', this.handleTouchEnd.bind(this));
+                    
+                    container.appendChild(wordEl);
+                });
+                
+                this.updateProgress();
+            }
+
+            setupDragAndDrop() {
+                const container = document.getElementById('words-container');
+                const answerArea = document.getElementById('answer-area');
+                
+                container.addEventListener('dragstart', (e) => {
+                    if (e.target.classList.contains('word')) {
+                        e.target.classList.add('dragging');
+                        this.draggedElement = e.target;
+                        e.dataTransfer.effectAllowed = 'move';
+                    }
+                });
+                
+                container.addEventListener('dragend', (e) => {
+                    if (e.target.classList.contains('word')) {
+                        e.target.classList.remove('dragging');
+                    }
+                });
+                
+                answerArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    answerArea.classList.add('drag-over');
+                });
+                
+                answerArea.addEventListener('dragleave', () => {
+                    answerArea.classList.remove('drag-over');
+                });
+                
+                answerArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    answerArea.classList.remove('drag-over');
+                    
+                    if (this.draggedElement) {
+                        this.addWordToAnswer(this.draggedElement);
+                    }
+                });
+                
+                // Allow removing words from answer
+                answerArea.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('word')) {
+                        this.removeWordFromAnswer(e.target);
+                    }
+                });
+            }
+
+            handleTouchStart(e) {
+                const touch = e.touches[0];
+                this.draggedElement = e.target;
+                this.draggedElement.style.opacity = '0.5';
+                
+                this.touchOffset = {
+                    x: touch.clientX - e.target.getBoundingClientRect().left,
+                    y: touch.clientY - e.target.getBoundingClientRect().top
+                };
+            }
+
+            handleTouchMove(e) {
+                if (!this.draggedElement) return;
+                e.preventDefault();
+                
+                const touch = e.touches[0];
+                const answerArea = document.getElementById('answer-area');
+                const rect = answerArea.getBoundingClientRect();
+                
+                if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                    touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                    answerArea.classList.add('drag-over');
+                } else {
+                    answerArea.classList.remove('drag-over');
+                }
+            }
+
+            handleTouchEnd(e) {
+                if (!this.draggedElement) return;
+                
+                this.draggedElement.style.opacity = '1';
+                const touch = e.changedTouches[0];
+                const answerArea = document.getElementById('answer-area');
+                const rect = answerArea.getBoundingClientRect();
+                
+                if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                    touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                    this.addWordToAnswer(this.draggedElement);
+                }
+                
+                answerArea.classList.remove('drag-over');
+                this.draggedElement = null;
+            }
+
+            addWordToAnswer(wordEl) {
+                const answerArea = document.getElementById('answer-area');
+                
+                if (answerArea.querySelector('.drop-zone-placeholder')) {
+                    answerArea.innerHTML = '';
+                }
+                
+                const clone = wordEl.cloneNode(true);
+                clone.classList.remove('dragging');
+                clone.style.opacity = '1';
+                answerArea.appendChild(clone);
+                
+                wordEl.style.visibility = 'hidden';
+                
+                this.userAnswer.push(wordEl.dataset.word);
+            }
+
+            removeWordFromAnswer(wordEl) {
+                const text = wordEl.textContent;
+                const container = document.getElementById('words-container');
+                
+                const original = container.querySelector(`[data-word="${text}"]`);
+                if (original) {
+                    original.style.visibility = 'visible';
+                }
+                
+                wordEl.remove();
+                
+                const index = this.userAnswer.indexOf(text);
+                if (index > -1) {
+                    this.userAnswer.splice(index, 1);
+                }
+                
+                if (this.userAnswer.length === 0) {
+                    document.getElementById('answer-area').innerHTML = 
+                        '<span class="drop-zone-placeholder">Arrastra las palabras aquí...</span>';
+                }
+            }
+
+            checkAnswer() {
+                const level = this.levels[this.currentLevel];
+                const correctAnswer = level.words.join(' ');
+                const userAttempt = this.userAnswer.join(' ');
+                
+                const answerArea = document.getElementById('answer-area');
+                
+                if (userAttempt === correctAnswer) {
+                    answerArea.classList.add('correct');
+                    this.score += Math.max(100 - (this.timeElapsed * 2), 10);
+                    document.getElementById('score').textContent = this.score;
+                    document.getElementById('next-btn').style.display = 'inline-block';
+                    
+                    answerArea.querySelectorAll('.word').forEach((word, i) => {
+                        setTimeout(() => {
+                            word.classList.add('placed');
+                        }, i * 100);
+                    });
+                    
+                    if (this.currentLevel === this.levels.length - 1 || (this.currentLevel + 1) % 5 === 0) {
+                        this.celebrate();
+                    }
+                    
+                    this.showNotification('¡Correcto! 🎉', 'success');
+                } else {
+                    answerArea.classList.add('wrong');
+                    setTimeout(() => {
+                        answerArea.classList.remove('wrong');
+                    }, 500);
+                    this.showNotification('Inténtalo de nuevo 💪', 'error');
+                }
+            }
+
+            showHint() {
+                const level = this.levels[this.currentLevel];
+                document.getElementById('hint-text').textContent = 
+                    `${level.hint} (${level.rule})`;
+                document.getElementById('hint-box').classList.add('show');
+                this.score = Math.max(0, this.score - 5);
+                document.getElementById('score').textContent = this.score;
+            }
+
+            resetLevel() {
+                this.loadLevel();
+            }
+
+            nextLevel() {
+                if (this.currentLevel < this.levels.length - 1) {
+                    this.currentLevel++;
+                    this.timeElapsed = 0;
+                    document.getElementById('timer').classList.remove('warning');
+                    this.loadLevel();
+                } else {
+                    this.showVictoryScreen();
+                }
+            }
+
+            updateProgress() {
+                const progress = ((this.currentLevel + 1) / this.levels.length) * 100;
+                document.getElementById('progress').style.width = `${progress}%`;
+            }
+
+            celebrate() {
+                const colors = ['#7c3aed', '#dc2626', '#fbbf24', '#10b781', '#4c1d95'];
+                
+                for (let i = 0; i < 100; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + 'vw';
+                        confetti.style.top = '-10px';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.width = Math.random() * 10 + 5 + 'px';
+                        confetti.style.height = Math.random() * 10 + 5 + 'px';
+                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                        confetti.style.position = 'fixed';
+                        confetti.style.zIndex = '9999';
+                        confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
+                        document.body.appendChild(confetti);
+                        
+                        setTimeout(() => confetti.remove(), 5000);
+                    }, i * 20);
+                }
+            }
+
+            showNotification(message, type) {
+                const notif = document.createElement('div');
+                notif.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: ${type === 'success' ? '#10b981' : '#ef4444'};
+                    color: white;
+                    padding: 1rem 2rem;
+                    border-radius: 50px;
+                    font-weight: 700;
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                    z-index: 10000;
+                    animation: slideDown 0.3s ease;
+                `;
+                notif.textContent = message;
+                document.body.appendChild(notif);
+                setTimeout(() => notif.remove(), 2000);
+            }
+
+            showVictoryScreen() {
+                clearInterval(this.timerInterval);
+                document.querySelector('.game-area').innerHTML = `
+                    <div style="text-align: center; padding: 3rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🏆</div>
+                        <h2 style="color: #7c3aed; font-size: 2.5rem; margin-bottom: 1rem; font-family: 'Fredoka', sans-serif;">
+                            ¡Dominador del Pasado Negativo!
+                        </h2>
+                        <p style="font-size: 1.2rem; color: #4c1d95; margin-bottom: 2rem;">
+                            Has completado las 30 oraciones negativas en pasado<br>
+                            Puntuación final: <strong>${this.score}</strong>
+                        </p>
+                        <button class="btn-primary" onclick="location.reload()" style="font-size: 1.2rem;">
+                            Jugar de nuevo 🔄
+                        </button>
+                    </div>
+                `;
+                this.celebrate();
+            }
+        }
+
+        const game = new PastNegativeGame();
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translate(-50%, -100%); opacity: 0; }
+                to { transform: translate(-50%, 0); opacity: 1; }
+            }
+            @keyframes confetti-fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

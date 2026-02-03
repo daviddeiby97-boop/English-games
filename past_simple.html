@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master the Past Simple - Verbos Regulares</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Section */
+        .hero {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #ffeaa7;
+            color: #d63031;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        h1 {
+            color: #2d3436;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        
+        .subtitle {
+            color: #636e72;
+            font-size: 1.2rem;
+        }
+        
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            font-size: 0.95rem;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background: white;
+            color: #764ba2;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            color: #6c5ce7;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .icon {
+            font-size: 1.8rem;
+        }
+        
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(116, 185, 255, 0.3);
+        }
+        
+        .formula-parts {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .part {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        
+        .arrow-down {
+            font-size: 2rem;
+            color: #fdcb6e;
+        }
+        
+        /* Spelling Rules Grid */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .rule-card {
+            background: #f8f9fa;
+            border-left: 5px solid #e17055;
+            padding: 20px;
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .rule-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .rule-title {
+            color: #d63031;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .example {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-family: 'Courier New', monospace;
+            color: #2d3436;
+            border: 1px dashed #b2bec3;
+        }
+        
+        /* Pronunciation Section */
+        .sound-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .sound-card {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sound-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(108, 92, 231, 0.4);
+        }
+        
+        .sound-symbol {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .sound-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .verb-examples {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        /* Structure Tables */
+        .structure-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .structure-table th {
+            background: #00b894;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .structure-table td {
+            padding: 15px;
+            border-bottom: 1px solid #dfe6e9;
+        }
+        
+        .structure-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .positive { color: #00b894; font-weight: 700; }
+        .negative { color: #d63031; font-weight: 700; }
+        .question { color: #0984e3; font-weight: 700; }
+        
+        /* Interactive Exercises */
+        .exercise-container {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .quiz-question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #74b9ff;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3436;
+            font-size: 1.1rem;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            background: white;
+            border: 2px solid #dfe6e9;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .option:hover {
+            border-color: #74b9ff;
+            background: #f0f8ff;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #00b894;
+            color: #155724;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #d63031;
+            color: #721c24;
+        }
+        
+        .option input[type="radio"] {
+            display: none;
+        }
+        
+        .check-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s;
+            width: 100%;
+        }
+        
+        .check-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            padding: 20px;
+            background: #ffeaa7;
+            border-radius: 15px;
+            color: #d63031;
+            font-weight: 700;
+            display: none;
+        }
+        
+        /* Fill in the blanks exercise */
+        .fill-exercise {
+            line-height: 2.5;
+            font-size: 1.1rem;
+            color: #2d3436;
+        }
+        
+        .blank-input {
+            border: none;
+            border-bottom: 3px solid #74b9ff;
+            padding: 5px 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6c5ce7;
+            text-align: center;
+            width: 150px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .blank-input:focus {
+            outline: none;
+            border-bottom-color: #6c5ce7;
+            background: #f0f8ff;
+            border-radius: 5px;
+        }
+        
+        .blank-input.correct {
+            border-bottom-color: #00b894;
+            color: #00b894;
+            background: #d4edda;
+        }
+        
+        .blank-input.incorrect {
+            border-bottom-color: #d63031;
+            color: #d63031;
+            background: #f8d7da;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+            padding: 5px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, #ffeaa7 0%, #fab1a0 50%, #fd79a8 100%);
+            border-radius: 50px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .formula-parts { flex-direction: column; }
+            .tab-btn { padding: 12px 20px; font-size: 0.85rem; }
+        }
+        
+        /* Animations */
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="hero">
+            <div class="badge">GRAMÁTICA INTERACTIVA</div>
+            <h1>Simple Past Tense 🕐</h1>
+            <p class="subtitle">Domina los verbos regulares en pasado con ejercicios prácticos</p>
+            <div style="margin-top: 20px; font-size: 3rem;" class="bounce">📚✨</div>
+        </div>
+        
+        <!-- Progress -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('rules')">📋 Reglas</button>
+            <button class="tab-btn" onclick="showTab('spelling')">✍️ Ortografía</button>
+            <button class="tab-btn" onclick="showTab('pronunciation')">🔊 Pronunciación</button>
+            <button class="tab-btn" onclick="showTab('structure')">🏗️ Estructura</button>
+            <button class="tab-btn" onclick="showTab('exercises')">🎮 Ejercicios</button>
+        </div>
+        
+        <!-- TAB 1: Basic Rules -->
+        <div id="rules" class="content-section active">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">🎯</span>La Fórmula Dorada</h2>
+                <div class="formula-box">
+                    <div>Sujeto + Verbo en forma base + <span style="color: #ffeaa7; font-size: 1.5rem;">-ed</span></div>
+                    <div class="arrow-down">⬇️</div>
+                    <div class="formula-parts">
+                        <div class="part">I / You / He / She / It / We / They</div>
+                        <span style="font-size: 1.5rem;">+</span>
+                        <div class="part">play → played<br>watch → watched<br>walk → walked</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; background: #fff3cd; padding: 20px; border-radius: 15px; border-left: 5px solid #ffc107;">
+                    <strong>💡 Recuerda:</strong> El Pasado Simple describe acciones <strong>completadas</strong> en el pasado. Siempre necesitas una referencia de tiempo pasado (yesterday, last week, in 2020, etc.)
+                </div>
+                
+                <h3 style="margin-top: 30px; color: #6c5ce7;">Ejemplos Visuales:</h3>
+                <div class="rules-grid">
+                    <div class="rule-card" style="border-left-color: #00b894;">
+                        <div class="rule-title" style="color: #00b894;">Affirmative ✅</div>
+                        <div class="example">I play<span style="color: #00b894; font-weight: bold;">ed</span> football yesterday.</div>
+                        <div class="example">She watch<span style="color: #00b894; font-weight: bold;">ed</span> TV last night.</div>
+                    </div>
+                    <div class="rule-card" style="border-left-color: #d63031;">
+                        <div class="rule-title" style="color: #d63031;">Negative ❌</div>
+                        <div class="example">I did<strong>n't</strong> play football.</div>
+                        <div class="example">She did<strong>n't</strong> watch TV.</div>
+                        <small style="color: #636e72;">(El verbo vuelve a la base)</small>
+                    </div>
+                    <div class="rule-card" style="border-left-color: #0984e3;">
+                        <div class="rule-title" style="color: #0984e3;">Interrogative ❓</div>
+                        <div class="example"><strong>Did</strong> you play football?</div>
+                        <div class="example"><strong>Did</strong> she watch TV?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TAB 2: Spelling Rules -->
+        <div id="spelling" class="content-section">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">📝</span>Reglas Ortográficas del -ed</h2>
+                <p style="margin-bottom: 20px; color: #636e72;">No siempre es solo agregar "-ed". Hay reglas especiales:</p>
+                
+                <div class="rules-grid">
+                    <div class="rule-card">
+                        <div class="rule-title">1. Verbos terminados en -e</div>
+                        <p>Solo agrega <strong>-d</strong></p>
+                        <div class="example">love → lov<span style="color: #e17055; font-weight: bold;">ed</span></div>
+                        <div class="example">dance → danc<span style="color: #e17055; font-weight: bold;">ed</span></div>
+                        <div class="example">like → lik<span style="color: #e17055; font-weight: bold;">ed</span></div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <div class="rule-title">2. Consonante + y</div>
+                        <p>Cambia <strong>y → i</strong> + -ed</p>
+                        <div class="example">study → stud<span style="color: #e17055; font-weight: bold;">ied</span></div>
+                        <div class="example">carry → carr<span style="color: #e17055; font-weight: bold;">ied</span></div>
+                        <div class="example">try → tr<span style="color: #e17055; font-weight: bold;">ied</span></div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <div class="rule-title">3. Vocal + y</div>
+                        <p>Normal: solo -ed</p>
+                        <div class="example">play → play<span style="color: #e17055; font-weight: bold;">ed</span></div>
+                        <div class="example">enjoy → enjoy<span style="color: #e17055; font-weight: bold;">ed</span></div>
+                        <div class="example">stay → stay<span style="color: #e17055; font-weight: bold;">ed</span></div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <div class="rule-title">4. CVC (Consonante-Vocal-Consonante)</div>
+                        <p>Doble la última consonante</p>
+                        <div class="example">stop → sto<span style="color: #e17055; font-weight: bold;">pped</span></div>
+                        <div class="example">plan → pla<span style="color: #e17055; font-weight: bold;">nned</span></div>
+                        <div class="example">prefer → prefer<span style="color: #e17055; font-weight: bold;">red</span></div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #e8f5e9; border-radius: 15px; border: 2px dashed #4caf50;">
+                    <strong>🎓 Truco mnemotécnico:</strong> "Si termina en <strong>y</strong> con consonante antes, <strong>i</strong> es la que debes usar. Si es CVC y es corto, la última letra debes duplicar."
+                </div>
+            </div>
+        </div>
+        
+        <!-- TAB 3: Pronunciation -->
+        <div id="pronunciation" class="content-section">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">🎵</span>Pronunciación del -ed</h2>
+                <p style="margin-bottom: 20px;">El sufijo -ed tiene 3 sonidos diferentes. ¡Haz clic en cada tarjeta para escuchar (simulado)!</p>
+                
+                <div class="sound-cards">
+                    <div class="sound-card" onclick="playSound('t')">
+                        <div class="sound-symbol">/t/</div>
+                        <div class="sound-desc">Sonido <strong>sordo</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.8rem;">(sin vibración vocal)</div>
+                        <div class="verb-examples">
+                            walk<span style="font-weight: bold;">ed</span> /wɔːkt/<br>
+                            watch<span style="font-weight: bold;">ed</span> /wɒtʃt/<br>
+                            kiss<span style="font-weight: bold;">ed</span> /kɪst/<br>
+                            <small style="opacity: 0.8;">Después de: /k/, /p/, /s/, /ʃ/, /tʃ/, /f/</small>
+                        </div>
+                    </div>
+                    
+                    <div class="sound-card" onclick="playSound('d')" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);">
+                        <div class="sound-symbol">/d/</div>
+                        <div class="sound-desc">Sonido <strong>sonoro</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.8rem;">(con vibración vocal)</div>
+                        <div class="verb-examples">
+                            play<span style="font-weight: bold;">ed</span> /pleɪd/<br>
+                            call<span style="font-weight: bold;">ed</span> /kɔːld/<br>
+                            clean<span style="font-weight: bold;">ed</span> /kliːnd/<br>
+                            <small style="opacity: 0.8;">Después de vocales y sonoras: /l/, /n/, /r/, /g/, /v/</small>
+                        </div>
+                    </div>
+                    
+                    <div class="sound-card" onclick="playSound('id')" style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);">
+                        <div class="sound-symbol">/ɪd/</div>
+                        <div class="sound-desc">Sílaba extra <strong>/id/</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.8rem;">(Se agrega sílaba)</div>
+                        <div class="verb-examples">
+                            want<span style="font-weight: bold;">ed</span> /ˈwɒntɪd/<br>
+                            need<span style="font-weight: bold;">ed</span> /ˈniːdɪd/<br>
+                            start<span style="font-weight: bold;">ed</span> /ˈstɑːtɪd/<br>
+                            <small style="opacity: 0.8;">Solo después de: /t/ o /d/</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 15px;">
+                    <h4 style="color: #6c5ce7; margin-bottom: 15px;">🔊 Regla rápida:</h4>
+                    <p><strong>/t/</strong> → Verbos sin voz (susurros)<br>
+                    <strong>/d/</strong> → Verbos con voz (cantas)<br>
+                    <strong>/ɪd/</strong> → Solo si termina en T o D</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TAB 4: Structure -->
+        <div id="structure" class="content-section">
+            <div class="card">
+                <h2 class="card-title"><span class="icon">🏗️</span>Estructura de Oraciones</h2>
+                
+                <table class="structure-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Fórmula</th>
+                            <th>Ejemplo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="positive">Afirmativo (+)</td>
+                            <td>Sujeto + V-ed + complemento</td>
+                            <td>I played tennis yesterday.</td>
+                        </tr>
+                        <tr>
+                            <td class="negative">Negativo (-)</td>
+                            <td>Sujeto + did + not + V(base) + comp.</td>
+                            <td>I didn't play tennis yesterday.</td>
+                        </tr>
+                        <tr>
+                            <td class="question">Interrogativo (?)</td>
+                            <td>Did + sujeto + V(base) + complemento?</td>
+                            <td>Did you play tennis yesterday?</td>
+                        </tr>
+                        <tr>
+                            <td class="positive">Respuesta corta (+)</td>
+                            <td>Yes, sujeto + did</td>
+                            <td>Yes, I did.</td>
+                        </tr>
+                        <tr>
+                            <td class="negative">Respuesta corta (-)</td>
+                            <td>No, sujeto + didn't</td>
+                            <td>No, I didn't.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 30px; background: #fff3cd; padding: 20px; border-radius: 15px; border-left: 5px solid #ffc107;">
+                    <strong>⚠️ Importante:</strong> En oraciones negativas e interrogativas, el verbo principal vuelve a su forma base (sin -ed). El "did" ya lleva el tiempo pasado.
+                </div>
+                
+                <div style="margin-top: 20px; background: #d1ecf1; padding: 20px; border-radius: 15px; border-left: 5px solid #0c5460;">
+                    <strong>⏰ Marcas temporales comunes:</strong><br>
+                    yesterday, last night/week/month/year, ago (two days ago), in 2020, when I was young, this morning.
+                </div>
+            </div>
+        </div>
+        
+        <!-- TAB 5: Exercises -->
+        <div id="exercises" class="content-section">
+            <div class="exercise-container">
+                <h2 class="card-title"><span class="icon">🎮</span>Ejercicios Interactivos</h2>
+                <p style="margin-bottom: 20px; color: #636e72;">Completa los ejercicios y presiona "Verificar respuestas" para ver tu puntaje.</p>
+                
+                <!-- Exercise 1: Multiple Choice -->
+                <div class="quiz-question">
+                    <div class="question-text">1. Completa la oración: "She _______ (watch) a movie last night."</div>
+                    <div class="options" id="q1">
+                        <label class="option" onclick="selectOption('q1', 'a', false)">
+                            <input type="radio" name="q1" value="a">
+                            <span>watch</span>
+                        </label>
+                        <label class="option" onclick="selectOption('q1', 'b', true)">
+                            <input type="radio" name="q1" value="b">
+                            <span>watched</span>
+                        </label>
+                        <label class="option" onclick="selectOption('q1', 'c', false)">
+                            <input type="radio" name="q1" value="c">
+                            <span>watching</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Exercise 2: Spelling -->
+                <div class="quiz-question">
+                    <div class="question-text">2. ¿Cuál es la forma correcta del pasado de "study"?</div>
+                    <div class="options" id="q2">
+                        <label class="option" onclick="selectOption('q2', 'a', false)">
+                            <input type="radio" name="q2" value="a">
+                            <span>studyed</span>
+                        </label>
+                        <label class="option" onclick="selectOption('q2', 'b', true)">
+                            <input type="radio" name="q2" value="b">
+                            <span>studied</span>
+                        </label>
+                        <label class="option" onclick="selectOption('q2', 'c', false)">
+                            <input type="radio" name="q2" value="c">
+                            <span>studying</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Exercise 3: Negative -->
+                <div class="quiz-question">
+                    <div class="question-text">3. Selecciona la oración negativa correcta:</div>
+                    <div class="options" id="q3">
+                        <label class="option" onclick="selectOption('q3', 'a', false)">
+                            <input type="radio" name="q3" value="a">
+                            <span>I didn't played tennis.</span>
+                        </label>
+                        <label class="option" onclick="selectOption('q3', 'b', true)">
+                            <input type="radio" name="q3" value="b">
+                            <span>I didn't play tennis.</span>
+                        </label>
+                        <label class="option" onclick="selectOption('q3', 'c', false)">
+                            <input type="radio" name="q3" value="c">
+                            <span>I don't played tennis.</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Exercise 4: Fill in the blanks -->
+                <div class="quiz-question">
+                    <div class="question-text">4. Completa el párrafo con el pasado simple:</div>
+                    <div class="fill-exercise" style="margin-top: 15px; line-height: 2.2;">
+                        Yesterday I <input type="text" class="blank-input" id="blank1" placeholder="wake"> (wake) up at 7:00. 
+                        I <input type="text" class="blank-input" id="blank2" placeholder="have"> (have) breakfast and then 
+                        I <input type="text" class="blank-input" id="blank3" placeholder="walk"> (walk) to school. 
+                        My friend <input type="text" class="blank-input" id="blank4" placeholder="carry"> (carry) my books for me. 
+                        We <input type="text" class="blank-input" id="blank5" placeholder="study"> (study) English for two hours.
+                    </div>
+                    <small style="color: #636e72; display: block; margin-top: 10px;">Nota: "wake" es irregular (woke), pero escríbelo como ejercicio de atención 😉</small>
+                </div>
+                
+                <button class="check-btn" onclick="checkAnswers()">✅ Verificar Respuestas</button>
+                
+                <div id="scoreDisplay" class="score-display"></div>
+                
+                <div id="feedback" style="margin-top: 20px; display: none;">
+                    <h3 style="color: #6c5ce7; margin-bottom: 15px;">📊 Retroalimentación:</h3>
+                    <ul id="feedbackList" style="list-style: none; padding: 0;"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Navigation
+        function showTab(tabName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Update progress bar
+            updateProgress(tabName);
+        }
+        
+        function updateProgress(tab) {
+            const progress = {
+                'rules': 20,
+                'spelling': 40,
+                'pronunciation': 60,
+                'structure': 80,
+                'exercises': 100
+            };
+            document.getElementById('progressBar').style.width = progress[tab] + '%';
+        }
+        
+        // Quiz Logic
+        let answers = {
+            q1: null,
+            q2: null,
+            q3: null
+        };
+        
+        function selectOption(question, option, isCorrect) {
+            answers[question] = isCorrect;
+            
+            // Visual feedback
+            const options = document.getElementById(question).querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('correct', 'incorrect'));
+            
+            const selected = event.currentTarget;
+            if (isCorrect) {
+                selected.classList.add('correct');
+            } else {
+                selected.classList.add('incorrect');
+                // Highlight correct one
+                options.forEach(opt => {
+                    if (opt.onclick.toString().includes('true')) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+        }
+        
+        function checkAnswers() {
+            let score = 0;
+            let total = 8; // 3 multiple choice + 5 fill in blanks
+            
+            // Check multiple choice
+            if (answers.q1) score++;
+            if (answers.q2) score++;
+            if (answers.q3) score++;
+            
+            // Check fill in the blanks (regular verbs exercise)
+            const blanks = {
+                'blank1': ['woke', 'waked'],
+                'blank2': ['had'],
+                'blank3': ['walked'],
+                'blank4': ['carried'],
+                'blank5': ['studied']
+            };
+            
+            const feedbackList = document.getElementById('feedbackList');
+            feedbackList.innerHTML = '';
+            
+            for (let [id, correctValues] of Object.entries(blanks)) {
+                const input = document.getElementById(id);
+                const value = input.value.trim().toLowerCase();
+                
+                if (correctValues.includes(value)) {
+                    score++;
+                    input.classList.add('correct');
+                    input.classList.remove('incorrect');
+                } else {
+                    input.classList.add('incorrect');
+                    input.classList.remove('correct');
+                    
+                    // Add feedback
+                    const li = document.createElement('li');
+                    li.style.marginBottom = '10px';
+                    li.innerHTML = `• "${id.replace('blank', 'Espacio ')}" correcto: <strong>${correctValues[0]}</strong>`;
+                    feedbackList.appendChild(li);
+                }
+            }
+            
+            // Display score
+            const percentage = Math.round((score / total) * 100);
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            scoreDisplay.style.display = 'block';
+            
+            let message = '';
+            let emoji = '';
+            
+            if (percentage === 100) {
+                message = '¡Perfecto! 🎉';
+                emoji = '🏆';
+            } else if (percentage >= 70) {
+                message = '¡Muy bien! 💪';
+                emoji = '⭐';
+            } else if (percentage >= 50) {
+                message = 'Sigue practicando 📚';
+                emoji = '📖';
+            } else {
+                message = 'Revisa las reglas otra vez 🤔';
+                emoji = '💡';
+            }
+            
+            scoreDisplay.innerHTML = `${emoji} Tu puntaje: ${score}/${total} (${percentage}%) - ${message}`;
+            
+            if (score < total) {
+                document.getElementById('feedback').style.display = 'block';
+            } else {
+                document.getElementById('feedback').style.display = 'none';
+            }
+            
+            // Scroll to score
+            scoreDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        // Sound simulation (visual feedback)
+        function playSound(sound) {
+            const card = event.currentTarget;
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                card.style.transform = 'scale(1)';
+            }, 200);
+            
+            // Visual indicator
+            const indicator = document.createElement('div');
+            indicator.textContent = '🔊';
+            indicator.style.position = 'absolute';
+            indicator.style.top = '50%';
+            indicator.style.left = '50%';
+            indicator.style.transform = 'translate(-50%, -50%) scale(2)';
+            indicator.style.fontSize = '3rem';
+            indicator.style.opacity = '0';
+            indicator.style.transition = 'all 0.5s';
+            indicator.style.pointerEvents = 'none';
+            
+            card.appendChild(indicator);
+            
+            setTimeout(() => {
+                indicator.style.opacity = '1';
+                indicator.style.transform = 'translate(-50%, -50%) scale(2.5)';
+            }, 10);
+            
+            setTimeout(() => {
+                indicator.style.opacity = '0';
+                setTimeout(() => indicator.remove(), 500);
+            }, 1000);
+        }
+        
+        // Initialize progress
+        updateProgress('rules');
+    </script>
+</body>
+</html>
